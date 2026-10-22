@@ -6,10 +6,9 @@ R code for the analyses and figures in the manuscript on relationships between f
 
 1. Install R and RStudio, and download this repository (green **Code** button → Download ZIP, or clone it with GitHub Desktop).
 2. Put the data file in the `data` folder (see `data/README.md`).
-3. Double-click `lizard-fish-coral.Rproj` to open the project in RStudio. This sets the working directory, so no paths need editing.
-4. Open a script from the `R` folder and click **Source**. Outputs are written to a new `outputs` folder.
+3. Open a script from the `R` folder in RStudio and click **Source**. Each script sets the working directory to the project folder itself, so no paths need editing. (Outside RStudio, run `setwd("path to lizard_repo")` first.) Outputs are written to a new `outputs` folder.
 
-Scripts can be run in any order, except 05b (needs 05) and 10 (needs 01 and 02).
+Scripts can be run in any order, except 05b (needs 05), 10 (needs 01 and 02) and 11 (needs 01).
 
 ## Scripts
 
@@ -17,15 +16,16 @@ Scripts can be run in any order, except 05b (needs 05) and 10 (needs 01 and 02).
 |---|---|---|
 | `01_fish_summary_glmms.R` | Bayesian GLMMs of total density, richness and biomass | Figure 2, Table 2 |
 | `02_trophic_glmms.R` | Bayesian GLMMs of trophic groups | Figure S1, Table S2 (trophic) |
-| `03_community_composition.R` | PERMANOVA, dispersion tests and SIMPER | Figure 3 (nMDS), Table 3, Table S3 |
+| `03_community_composition.R` | PERMANOVA, dispersion tests and SIMPER | Figure 3 (nMDS), Table 3, SIMPER tables |
 | `04_brt_total_metrics.R` | BRTs for total density, richness and biomass | Figure 4 |
-| `05_brt_species.R` | BRTs for each fish species | Figure 5, Table S5 |
+| `05_brt_species.R` | BRTs for each fish species | Figure 5, Table S4 |
 | `05b_redraw_figure5.R` | Redraws Figure 5 from saved results (seconds) | Figure 5 |
-| `06_exposure_slope_contrasts.R` | Differences between exposure zones in species–coral slopes | contrast tables, Figure S2 |
+| `06_exposure_slope_contrasts.R` | Differences between exposure zones in species–coral slopes | contrast tables |
 | `07_temporal_slope_template.R` | Template for year-specific slopes of one species–coral pair | slope tables |
 | `08_figure6_relationship_change.R` | Draws Figure 6 from the relationship-change table | Figure 6 |
-| `09_brt_out_of_sample.R` | Out-of-sample accuracy of the BRTs | validation tables, Table S4 |
+| `09_brt_out_of_sample.R` | Out-of-sample accuracy of the BRTs | validation tables |
 | `10_condensed_glmm_tables.R` | Condensed contrast tables | Table S2 |
+| `11_depth_sensitivity.R` | Tests whether pooling shallow and deep transects matters | depth comparison tables |
 
 `00_setup.R` and the `helpers_*.R` files hold settings and functions used by the scripts above.
 

@@ -15,6 +15,9 @@
 # Run time: hours. Fitted models are saved and re-used on later runs.
 # =============================================================================
 
+# Sets the working directory to the project folder (the folder holding R and data) if it isn't already.
+# This works when the script is open in RStudio; otherwise run setwd("path to lizard_repo") first.
+if (!file.exists("R/00_setup.R")) setwd(dirname(dirname(rstudioapi::getSourceEditorContext()$path)))
 source("R/00_setup.R")
 source("R/helpers_glmm.R")
 require_pkgs(c("flextable", "officer"))   # only used to write .docx tables

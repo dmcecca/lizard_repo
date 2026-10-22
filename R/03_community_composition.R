@@ -17,6 +17,9 @@
 # Run time: minutes.
 # =============================================================================
 
+# Sets the working directory to the project folder (the folder holding R and data) if it isn't already.
+# This works when the script is open in RStudio; otherwise run setwd("path to lizard_repo") first.
+if (!file.exists("R/00_setup.R")) setwd(dirname(dirname(rstudioapi::getSourceEditorContext()$path)))
 source("R/00_setup.R")
 require_pkgs(c("vegan", "ggrepel", "patchwork"))
 library(vegan); library(ggrepel); library(patchwork)

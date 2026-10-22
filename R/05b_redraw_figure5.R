@@ -7,7 +7,10 @@
 # Produces:  outputs/brt_species/Figure5_tall, Figure5_part1, Figure5_part2 (.pdf, .png)
 # =============================================================================
 
-source(file.path("R", "00_setup.R"))
+# Sets the working directory to the project folder (the folder holding R and data) if it isn't already.
+# This works when the script is open in RStudio; otherwise run setwd("path to lizard_repo") first.
+if (!file.exists("R/00_setup.R")) setwd(dirname(dirname(rstudioapi::getSourceEditorContext()$path)))
+source("R/00_setup.R")
 source(file.path("R", "helpers_figure5.R"))
 require_pkgs(c("ggplot2", "dplyr"))
 

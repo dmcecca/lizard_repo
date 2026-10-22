@@ -10,7 +10,10 @@
 # Run 01 and 02 first.
 # =============================================================================
 
-source(file.path("R", "00_setup.R"))
+# Sets the working directory to the project folder (the folder holding R and data) if it isn't already.
+# This works when the script is open in RStudio; otherwise run setwd("path to lizard_repo") first.
+if (!file.exists("R/00_setup.R")) setwd(dirname(dirname(rstudioapi::getSourceEditorContext()$path)))
+source("R/00_setup.R")
 require_pkgs(c("brms", "emmeans", "coda", "broom", "flextable"))
 
 FISH_MODEL_FOLDER    <- file.path(OUT_DIR, "glmm_fish_metrics", "brms_fish_models")

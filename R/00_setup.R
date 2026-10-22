@@ -1,8 +1,8 @@
 # =============================================================================
 # 00_setup.R
 # Settings and helper functions shared by all scripts.
-# Every script starts with:  source("R/00_setup.R")
-# Open lizard-fish-coral.Rproj in RStudio first, so the working directory is the project folder.
+# Every script starts by setting the working directory to the project folder and then sourcing this file.
+# If your data are stored elsewhere, change DATA_FILE below.
 # =============================================================================
 
 suppressPackageStartupMessages({
