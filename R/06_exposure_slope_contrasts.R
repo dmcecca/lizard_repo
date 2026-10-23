@@ -10,7 +10,9 @@
 #   skipped_pairs.csv                                             fish x coral pairs not fitted, and why
 #   Exposure_contrasts_heatmap.pdf
 #
+# Response: raw fish counts (density per 1000 m2 divided by the belt multiplier, 4 or 20; see to_counts in 00_setup.R)
 # Model:    fish ~ 1 + Exposure + coral_sc + coral_sc:Exposure + f(SiteTransect, iid), family nbinomial
+#           (SiteTransect = one ID per transect position: site, depth stratum and transect number)
 #           (coral_sc = coral cover standardised within each model: mean 0, SD 1)
 # Run time: hours. Fitted models are saved and re-used on later runs.
 # Needs:    INLA (not on CRAN: https://www.r-inla.org/download-install)
@@ -29,9 +31,10 @@ model_dir <- dirname(out_path(res_dir, "models", ".keep"))
 # ---- Settings (as in the Methods) ---------------------------------------------
 FAMILY           <- "nbinomial"
 MIN_N_OBS        <- 8     # minimum observations per fish x coral dataset
-MIN_NONZERO      <- 2     # minimum non-zero fish counts
+MIN_NONZERO      <- 10    # minimum non-zero fish counts (transects where the species was recorded)
 MIN_CORAL_UNIQUE <- 2     # minimum distinct coral cover values
-MIN_ROWS_LEVEL   <- 3     # per exposure level: minimum observations ...
+MIN_NONZERO_LEVEL <- 5    # per exposure level: minimum non-zero fish counts ...
+MIN_ROWS_LEVEL   <- 3     # ... and minimum observations ...
 MIN_CORAL_UNIQUE_LEVEL <- 2   # ... and distinct coral cover values; failing levels are dropped
 NSAMP            <- 400   # posterior samples per model
 set.seed(SEED_MASTER)
@@ -39,10 +42,11 @@ set.seed(SEED_MASTER)
 # ---- 1. Data ----------------------------------------------------------------
 lizard <- read_lizard() |>
   mutate(Site = factor(Site), Exposure = factor(Exposure, levels = EXPOSURE_LEVELS_GRADIENT),
-         Transect = factor(Transect), SiteTransect = interaction(Site, Transect, drop = TRUE))
+         Transect = factor(Transect), SiteTransect = interaction(Site, Depth, Transect, drop = TRUE))
 
 fish_cols  <- col_range(lizard, FISH_FIRST, FISH_LAST)
 coral_cols <- intersect(CORAL_PREDICTORS, names(lizard))
+lizard[fish_cols] <- lapply(lizard[fish_cols], to_counts)   # densities per 1000 m2 -> raw counts
 message(length(fish_cols), " fish columns x ", length(coral_cols), " coral genera")
 
 # ---- 2. One nested dataset per fish x coral pair ------------------------------
@@ -53,7 +57,7 @@ nested <- lizard |>
   group_by(coral, fish) |> nest() |> ungroup() |>
   mutate(label = paste0(fish, " _ ", coral),
          data = purrr::map(data, \(d) d |>
-           mutate(fish_abundance = suppressWarnings(as.integer(fish_abundance)),
+           mutate(fish_abundance = as.integer(round(fish_abundance)),
                   coral_abundance = suppressWarnings(as.numeric(coral_abundance)),
                   Exposure = factor(Exposure)) |>
            filter(!is.na(fish_abundance), !is.na(coral_abundance), !is.na(Exposure), !is.na(SiteTransect)) |>
@@ -62,8 +66,8 @@ nested <- lizard |>
 # ---- 3. Screening: overall, then per exposure level ---------------------------
 level_ok <- function(d) {
   d |> group_by(Exposure) |>
-    summarise(n = n(), coral_unique = n_distinct(coral_abundance), .groups = "drop") |>
-    mutate(ok = n >= MIN_ROWS_LEVEL & coral_unique >= MIN_CORAL_UNIQUE_LEVEL)
+    summarise(n = n(), n_nonzero = sum(fish_abundance > 0), coral_unique = n_distinct(coral_abundance), .groups = "drop") |>
+    mutate(ok = n >= MIN_ROWS_LEVEL & n_nonzero >= MIN_NONZERO_LEVEL & coral_unique >= MIN_CORAL_UNIQUE_LEVEL)
 }
 
 screen_pair <- function(d) {

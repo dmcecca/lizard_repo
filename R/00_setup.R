@@ -90,6 +90,15 @@ save_table <- function(df, name, docx = TRUE, caption = NULL) {
   invisible(df)
 }
 
+# Fish densities in the data file are counts scaled to individuals per 1000 m2: x4 for species counted in the
+# 5 m wide belt and x20 for species counted in the 1 m wide belt. This returns the raw counts (density / belt multiplier)
+# for one species column; used by the count models (script 06, 07).
+belt_multiplier <- function(x) {
+  x <- suppressWarnings(as.numeric(x)); x <- x[is.finite(x) & x > 0]
+  if (length(x) && all(x %% 20 == 0)) 20 else 4
+}
+to_counts <- function(x) suppressWarnings(as.numeric(x)) / belt_multiplier(x)
+
 # ---- 4. Community helper (Fig 3, Table 3, Table S3) ---------------------------
 # Aggregate transects to Site x Year x Exposure means, transform, optionally drop
 # low-variance variables, return Bray-Curtis distances.
