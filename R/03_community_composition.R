@@ -21,7 +21,7 @@
 # This works when the script is open in RStudio; otherwise run setwd("path to lizard_repo") first.
 if (!file.exists("R/00_setup.R")) setwd(dirname(dirname(rstudioapi::getSourceEditorContext()$path)))
 source("R/00_setup.R")
-require_pkgs(c("vegan", "ggrepel", "patchwork"))
+require_pkgs(c("vegan", "permute", "ggrepel", "patchwork"))
 library(vegan); library(ggrepel); library(patchwork)
 
 res_dir <- "community"
@@ -104,6 +104,25 @@ permanova_global <- imap_dfr(prepped_t3, function(p, nm) {
 })
 save_table(permanova_global, file.path(res_dir, "Table3_PERMANOVA"), caption = "PERMANOVA results")
 
+# 3a2. Table 3 with permutations that respect the repeated sampling of sites
+#   Year:     permutations are restricted within sites (years are shuffled only among the same site's years)
+#   Exposure: sites are the units; Site x Year means are averaged to one profile per site and whole sites are permuted
+permanova_restricted <- imap_dfr(prepped_t3, function(p, nm) {
+  meta <- p$meta; meta$Year <- factor(meta$Year); meta$Site <- factor(meta$Site)
+  yr <- as.data.frame(vegan::adonis2(p$dist ~ Year, data = meta,
+                                     permutations = permute::how(blocks = meta$Site, nperm = N_PERM))) |>
+    rownames_to_column("Term") |> filter(Term == "Year") |> mutate(Test = "Year (permuted within sites)")
+  site_means <- as.data.frame(p$species) |> mutate(Site = meta$Site) |> group_by(Site) |>
+    summarise(across(everything(), mean), .groups = "drop")
+  site_meta  <- meta |> distinct(Site, Exposure) |> arrange(Site)
+  ex <- as.data.frame(vegan::adonis2(vegan::vegdist(select(site_means, -Site), "bray") ~ Exposure, data = site_meta,
+                                     permutations = N_PERM)) |>
+    rownames_to_column("Term") |> filter(Term == "Exposure") |> mutate(Test = "Exposure (whole sites permuted)")
+  bind_rows(yr, ex) |> mutate(Dataset = nm, n_sites = nlevels(meta$Site), .before = 1)
+})
+save_table(permanova_restricted, file.path(res_dir, "Table3_PERMANOVA_restricted_permutations"),
+           caption = "PERMANOVA with permutations restricted to account for repeated sampling of sites.")
+
 # 3b. Year-only model, with Year as a 4-level factor
 year_only <- function(p_list, tag) imap_dfr(p_list, function(p, nm) {
   as.data.frame(vegan::adonis2(p$dist ~ Year, data = mutate(p$meta, Year = factor(Year)), permutations = N_PERM)) |>
@@ -112,7 +131,7 @@ year_only <- function(p_list, tag) imap_dfr(p_list, function(p, nm) {
 permanova_year_only <- bind_rows(year_only(prepped, "as analysed (4th-root / log)"), year_only(prepped_raw, "untransformed"))
 save_table(permanova_year_only, file.path(res_dir, "PERMANOVA_year_only_factor"), docx = FALSE)
 
-# 3c. Homogeneity of multivariate dispersion among years
+# 3c. Homogeneity of multivariate dispersion among years (unrestricted permutations)
 disp <- function(p_list, tag) imap_dfr(p_list, function(p, nm) {
   pt <- vegan::permutest(vegan::betadisper(p$dist, factor(p$meta$Year)), permutations = N_PERM)
   tibble(Dataset = nm, Transformation = tag, F = pt$tab[1, "F"], p = pt$tab[1, "Pr(>F)"])
@@ -121,19 +140,28 @@ dispersion <- bind_rows(disp(prepped, "as analysed (4th-root / log)"), disp(prep
 save_table(dispersion, file.path(res_dir, "betadisper_year"), docx = FALSE)
 
 # 3d. Pairwise PERMANOVA between years and between exposure zones (raw, Holm and BH-adjusted p)
+#   Year pairs: permutations within sites.  Exposure pairs: site profiles, whole sites permuted.
 pairwise_permanova <- function(p, dataset, group_var) {
-  g <- factor(p$meta[[group_var]]); full <- as.matrix(p$dist)
+  meta <- p$meta; g <- factor(meta[[group_var]]); full <- as.matrix(p$dist)
   map_dfr(utils::combn(levels(droplevels(g)), 2, simplify = FALSE), function(pr) {
-    keep <- g %in% pr
-    fit <- vegan::adonis2(as.dist(full[keep, keep]) ~ group,
-                          data = data.frame(group = droplevels(g[keep])), permutations = N_PERM)
+    keep <- which(g %in% pr)
+    if (group_var == "Year") {
+      fit <- vegan::adonis2(as.dist(full[keep, keep]) ~ group, data = data.frame(group = droplevels(g[keep])),
+                            permutations = permute::how(blocks = droplevels(factor(meta$Site[keep])), nperm = N_PERM))
+    } else {
+      sp <- as.data.frame(p$species)[keep, , drop = FALSE]; sp$Site <- droplevels(factor(meta$Site[keep]))
+      site_means <- sp |> group_by(Site) |> summarise(across(everything(), mean), .groups = "drop")
+      site_grp   <- meta[keep, ] |> mutate(Site = droplevels(factor(Site))) |> distinct(Site, .data[[group_var]]) |> arrange(Site)
+      fit <- vegan::adonis2(vegan::vegdist(select(site_means, -Site), "bray") ~ group,
+                            data = data.frame(group = droplevels(factor(site_grp[[group_var]]))), permutations = N_PERM)
+    }
     tibble(Dataset = dataset, Factor = group_var, Level1 = pr[1], Level2 = pr[2],
            Df = fit$Df[1], SumOfSqs = fit$SumOfSqs[1], R2 = fit$R2[1], F = fit$F[1], p = fit$`Pr(>F)`[1])
   }) |> mutate(p_holm = p.adjust(p, "holm"), p_BH = p.adjust(p, "BH"))
 }
 pairwise_all <- bind_rows(
-  imap_dfr(prepped,     \(p, nm) pairwise_permanova(p, nm, "Year")),
-  imap_dfr(prepped,     \(p, nm) pairwise_permanova(p, nm, "Exposure")),
+  imap_dfr(prepped_t3,  \(p, nm) pairwise_permanova(p, nm, "Year")),
+  imap_dfr(prepped_t3,  \(p, nm) pairwise_permanova(p, nm, "Exposure")),
   imap_dfr(prepped_raw, \(p, nm) pairwise_permanova(p, nm, "Year")) |> mutate(Factor = "Year (untransformed)"))
 save_table(pairwise_all, file.path(res_dir, "PERMANOVA_pairwise_all"), caption = "Pairwise PERMANOVA results")
 
