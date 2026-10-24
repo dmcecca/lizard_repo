@@ -92,6 +92,14 @@ message(sum(is.na(nested$skip_reason)), " of ", nrow(nested), " pairs pass scree
 fit_pair <- function(d, label) {
   file <- file.path(model_dir, paste0("model_", safe_file(label), ".rds"))
   if (file.exists(file)) return(readRDS(file))
+  # Time saver: if the new run (script 06) already fitted this pair on exactly the same data, reuse that model
+  new_file <- file.path(OUT_DIR, "inla_exposure_slopes", "models", paste0("model_", safe_file(label), ".rds"))
+  if (file.exists(new_file)) {
+    m <- tryCatch(readRDS(new_file), error = function(e) NULL)
+    nd <- tryCatch(m$.args$data, error = function(e) NULL)
+    if (!is.null(nd) && nrow(nd) == nrow(d) && isTRUE(all.equal(as.numeric(nd$fish_abundance), as.numeric(d$fish_abundance))) &&
+        isTRUE(all.equal(as.numeric(nd$coral_sc), as.numeric(d$coral_sc)))) { saveRDS(m, file); return(m) }
+  }
   mod <- tryCatch(
     inla(fish_abundance ~ 1 + Exposure + coral_sc + coral_sc:Exposure + f(SiteTransect, model = "iid"),
          data = d, family = FAMILY, control.predictor = list(compute = FALSE),

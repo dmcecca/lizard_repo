@@ -10,7 +10,7 @@
 #   skipped_pairs.csv                                             fish x coral pairs not fitted, and why
 #   Exposure_contrasts_heatmap.pdf
 #
-# Response: raw fish counts (density per 1000 m2 divided by the belt multiplier, 4 or 20; see to_counts in 00_setup.R)
+# Response: fish density (individuals per 1000 m2; integer-valued, counts x 4 or 20), as in the original analysis
 # Model:    fish ~ 1 + Exposure + coral_sc + coral_sc:Exposure + f(SiteTransect, iid), family nbinomial
 #           (SiteTransect = one ID per transect position: site, depth stratum and transect number)
 #           (coral_sc = coral cover standardised within each model: mean 0, SD 1)
@@ -31,9 +31,9 @@ model_dir <- dirname(out_path(res_dir, "models", ".keep"))
 # ---- Settings (as in the Methods) ---------------------------------------------
 FAMILY           <- "nbinomial"
 MIN_N_OBS        <- 8     # minimum observations per fish x coral dataset
-MIN_NONZERO      <- 10    # minimum non-zero fish counts (transects where the species was recorded)
+MIN_NONZERO      <- 10    # minimum non-zero fish records (transects where the species was recorded)
 MIN_CORAL_UNIQUE <- 2     # minimum distinct coral cover values
-MIN_NONZERO_LEVEL <- 5    # per exposure level: minimum non-zero fish counts ...
+MIN_NONZERO_LEVEL <- 5    # per exposure level: minimum non-zero fish records ...
 MIN_ROWS_LEVEL   <- 3     # ... and minimum observations ...
 MIN_CORAL_UNIQUE_LEVEL <- 2   # ... and distinct coral cover values; failing levels are dropped
 NSAMP            <- 400   # posterior samples per model
@@ -46,7 +46,6 @@ lizard <- read_lizard() |>
 
 fish_cols  <- col_range(lizard, FISH_FIRST, FISH_LAST)
 coral_cols <- intersect(CORAL_PREDICTORS, names(lizard))
-lizard[fish_cols] <- lapply(lizard[fish_cols], to_counts)   # densities per 1000 m2 -> raw counts
 message(length(fish_cols), " fish columns x ", length(coral_cols), " coral genera")
 
 # ---- 2. One nested dataset per fish x coral pair ------------------------------

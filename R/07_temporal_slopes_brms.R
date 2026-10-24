@@ -6,10 +6,10 @@
 #   2011 (pre-disturbance), 2015/2017 (disturbance; the average of the two years' slopes), 2020 (post-disturbance).
 # The three slopes are turned into a trajectory class, which gives the table used to draw Figure 6.
 #
-# Model (one per pair and exposure zone):   fish density ~ coral_sc * Year + (1 | SiteTransect)
+# Model (one per pair and exposure zone):   fish density ~ coral_sc * Year + (1 | SiteDepthTransect)
 #   fish density = the density values in the data file (counts per 1000 m2), zero-inflated Poisson
 #   coral_sc     = coral cover standardised within each model (mean 0, SD 1)
-#   SiteTransect = site and transect number
+#   SiteDepthTransect = one ID per transect position (site, depth stratum and transect number)
 #   Priors: intercept normal(-2.3, 1.5); coefficients normal(0, 1); random-effect SD student-t(3, 0, 1.5); zero-inflation beta(1, 1)
 # Script 07b repeats the analysis on raw counts with a negative binomial model, as a check.
 #
@@ -48,7 +48,7 @@ pairs <- read.csv(file.path("data", "fish_coral_pairs_figure6.csv"), stringsAsFa
 lizard <- read_lizard()
 lizard <- lizard |>
   mutate(Year = factor(Year), Exposure = as.character(Exposure),
-         SiteTransect = paste(Site, Transect))
+         SiteDepthTransect = interaction(Site, Depth, Transect, sep = "-", drop = TRUE))
 stopifnot(all(pairs$fish %in% names(lizard)), all(pairs$coral %in% names(lizard)))
 
 # ---- 2. Helpers ------------------------------------------------------------------
@@ -65,7 +65,7 @@ template_fit <- NULL
 # Slopes of the three periods (matrix of posterior draws) for one pair in one exposure zone; NULL if it cannot be fitted
 fit_slopes <- function(fish, coral, zone) {
   d <- lizard |> filter(Exposure == zone) |>
-    transmute(Year, SiteTransect, y = as.integer(round(.data[[fish]])), coral = as.numeric(.data[[coral]])) |>
+    transmute(Year, SiteDepthTransect, y = as.integer(round(.data[[fish]])), coral = as.numeric(.data[[coral]])) |>
     filter(!is.na(y), !is.na(coral)) |> droplevels()
   period <- c("2011" = "2011", "2015" = "2015/2017", "2017" = "2015/2017", "2020" = "2020")[as.character(d$Year)]
   nz <- tapply(d$y > 0, period, sum)
@@ -77,7 +77,7 @@ fit_slopes <- function(fish, coral, zone) {
   # The Stan model is compiled once (first fit) and reused for every later pair, which saves most of the run time
   fit <- tryCatch({
     if (is.null(template_fit)) {
-      f1 <- brm(y ~ coral_sc * Year + (1 | SiteTransect), data = d, family = fam, prior = priors,
+      f1 <- brm(y ~ coral_sc * Year + (1 | SiteDepthTransect), data = d, family = fam, prior = priors,
                 chains = CHAINS, iter = ITER, warmup = WARMUP, cores = min(CHAINS, parallel::detectCores()),
                 control = list(adapt_delta = 0.95, max_treedepth = 15), seed = SEED, refresh = 0, silent = 2)
       template_fit <<- f1; f1
