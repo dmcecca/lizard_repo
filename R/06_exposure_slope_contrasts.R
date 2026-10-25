@@ -1,8 +1,10 @@
 # =============================================================================
 # 06_exposure_slope_contrasts.R
 # Does the relationship between a fish species and a coral genus differ among exposure zones?
-# One INLA negative-binomial model per fish species x coral genus; exposure-specific slopes and their
-# pairwise contrasts are calculated from posterior samples.
+# One INLA negative-binomial model per fish species x coral genus pair; exposure-specific slopes and their
+# pairwise contrasts are calculated from posterior samples. The pairs are those used in the temporal analysis
+# (BRT-influential coral genera, from script 05);
+# set BRT_PAIRS_ONLY <- FALSE to fit every fish species x coral genus instead (hours).
 #
 # Outputs (outputs/inla_exposure_slopes/):
 #   all_exposure_slope_contrasts.csv                              every fitted contrast
@@ -14,7 +16,7 @@
 # Model:    fish ~ 1 + Exposure + coral_sc + coral_sc:Exposure + f(SiteTransect, iid), family nbinomial
 #           (SiteTransect = one ID per transect position: site, depth stratum and transect number)
 #           (coral_sc = coral cover standardised within each model: mean 0, SD 1)
-# Run time: hours. Fitted models are saved and re-used on later runs.
+# Run time: minutes for the BRT pairs (hours for all pairs). Fitted models are saved and re-used on later runs.
 # Needs:    INLA (not on CRAN: https://www.r-inla.org/download-install)
 # =============================================================================
 
@@ -37,6 +39,7 @@ MIN_NONZERO_LEVEL <- 5    # per exposure level: minimum non-zero fish records ..
 MIN_ROWS_LEVEL   <- 3     # ... and minimum observations ...
 MIN_CORAL_UNIQUE_LEVEL <- 2   # ... and distinct coral cover values; failing levels are dropped
 NSAMP            <- 400   # posterior samples per model
+BRT_PAIRS_ONLY   <- TRUE  # fit only the fish x coral pairs identified as influential in the BRTs
 set.seed(SEED_MASTER)
 
 # ---- 1. Data ----------------------------------------------------------------
@@ -61,6 +64,12 @@ nested <- lizard |>
                   Exposure = factor(Exposure)) |>
            filter(!is.na(fish_abundance), !is.na(coral_abundance), !is.na(Exposure), !is.na(SiteTransect)) |>
            droplevels()))
+
+if (BRT_PAIRS_ONLY) {
+  pair_list <- brt_pairs()
+  nested <- nested |> semi_join(pair_list, by = c("fish", "coral"))
+  message(nrow(nested), " fish x coral pairs (BRT pairs)")
+}
 
 # ---- 3. Screening: overall, then per exposure level ---------------------------
 level_ok <- function(d) {

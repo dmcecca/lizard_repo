@@ -1,7 +1,7 @@
 # =============================================================================
 # 07_temporal_slopes_brms.R
 # How does each fish-coral relationship change through the disturbance-recovery cycle?
-# For every fish species x coral genus pair in data/fish_coral_pairs_figure6.csv, and in each exposure zone,
+# For every fish species x coral genus pair that the BRTs identified as influential (brt_pairs() in 00_setup.R), and in each exposure zone,
 # a Bayesian model (brms) estimates the fish-coral slope in three periods:
 #   2011 (pre-disturbance), 2015/2017 (disturbance; the average of the two years' slopes), 2020 (post-disturbance).
 # The three slopes are turned into a trajectory class, which gives the table used to draw Figure 6.
@@ -14,12 +14,13 @@
 # Script 07b repeats the analysis on raw counts with a negative binomial model, as a check.
 #
 # Produces (outputs/temporal_slopes/):
+#   pairs_used.csv                             the fish x coral pairs that were modelled
 #   fish_coral_relationship_change_table.csv   the table read by script 08 (same layout as the original table)
 #   period_slopes_long.csv                     slope, 95% interval and symbol for each period of every model
 #   comparison_with_original_table.csv         cell-by-cell comparison with the table in data/
 #   threshold_sensitivity.csv                  cells retained at stricter minimum-data rules (for the Methods / reviewer reply)
 #   unclassified_patterns.csv                  patterns not covered by the rules below (check by hand)
-# Run time: many hours (88 pairs x 4 exposure zones). Each model's slopes are saved, so a stopped run can be restarted.
+# Run time: many hours (about 70-90 pairs x 4 exposure zones). Each model's slopes are saved, so a stopped run can be restarted.
 # Needs:    brms, emmeans
 # =============================================================================
 
@@ -44,7 +45,8 @@ cache_dir <- dirname(out_path(res_dir, "model_slopes", ".keep"))
 set.seed(SEED)
 
 # ---- 1. Data ------------------------------------------------------------------
-pairs <- read.csv(file.path("data", "fish_coral_pairs_figure6.csv"), stringsAsFactors = FALSE)
+pairs <- brt_pairs()          # the BRT-influential pairs (see 00_setup.R)
+write.csv(pairs, out_path(res_dir, "pairs_used.csv"), row.names = FALSE)
 lizard <- read_lizard()
 lizard <- lizard |>
   mutate(Year = factor(Year), Exposure = as.character(Exposure),

@@ -1,7 +1,8 @@
 # =============================================================================
 # 12_screening_comparison.R
 # How robust are the fish-coral exposure contrasts to the data thresholds used to select models?
-# Compares an earlier run of script 06 (lenient thresholds) with a new run (stricter thresholds):
+# Compares an earlier run of script 06 (lenient thresholds) with a new run (stricter thresholds), for the fish x coral pairs
+# in data/fish_coral_pairs_figure6.csv:
 #   how many significant contrasts came from species recorded in fewer than 10 transects,
 #   and how many contrasts from the earlier run are still found, with the same direction, in the new run.
 #
@@ -17,8 +18,10 @@ old_file <- file.path(OUT_DIR, "inla_exposure_slopes_old", "all_exposure_slope_c
 new_file <- file.path(OUT_DIR, "inla_exposure_slopes",     "all_exposure_slope_contrasts.csv")
 if (!all(file.exists(c(old_file, new_file)))) stop("Both all_exposure_slope_contrasts.csv files are needed; see the header.", call. = FALSE)
 
+brt_pairs <- read.csv(file.path("data", "fish_coral_pairs_figure6.csv"), stringsAsFactors = FALSE)
 flag <- function(x) mutate(x, significant = q025 > 0 | q975 < 0, direction = sign(mean))
-old <- flag(read.csv(old_file)); new <- flag(read.csv(new_file))
+old <- flag(semi_join(read.csv(old_file), brt_pairs, by = c("fish", "coral")))
+new <- flag(semi_join(read.csv(new_file), brt_pairs, by = c("fish", "coral")))
 
 key <- c("fish", "coral", "contrast")
 both <- inner_join(select(old, all_of(key), old_sig = significant, old_dir = direction),

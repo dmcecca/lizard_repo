@@ -44,7 +44,7 @@ BENTHIC_VARS <- c("Coralline.algae", "Rubble", "sand", "Soft.coral", "Sponge",
                   "Total.scl.coral.cover", "Macroalgae", "Turf.algae", "Coral.genera")
 BENTHIC_EXCLUDE_SITE <- "Resort"   # dropped for the benthic ordination only
 
-# Coral predictors used in the BRT and INLA models (21 genera, including fire coral)
+# Coral predictors used in the BRT, INLA and brms models (21 genera, including fire coral)
 CORAL_PREDICTORS <- c(
   "Acropora", "Montipora", "Astreopora", "Dipsastraea", "Pocillopora", "Echinopora",
   "Diploastrea", "Porites", "Stylophora", "Physogyra", "Acanthastrea", "Mycedium",
@@ -62,6 +62,28 @@ read_lizard <- function(file = DATA_FILE) {
   miss <- setdiff(c("Site", "Year", "Exposure", "Depth", "Transect"), names(x))
   if (length(miss)) stop("Missing required columns: ", paste(miss, collapse = ", "), call. = FALSE)
   x
+}
+
+# Fish x coral pairs used in the INLA and brms fish-coral models, so that all analyses cover the same pairs.
+# PAIR_SOURCE = "file": the fixed list in data/fish_coral_pairs_figure6.csv (88 pairs: for each fish species whose BRT converged,
+#                       the coral genus (or genera) with the highest relative influence, keeping the pairs for which the
+#                       temporal model converged in at least one exposure zone)
+# PAIR_SOURCE = "brt":  pairs taken from the BRT results (script 05) as those whose coral genus has a 95% interval of relative
+#                       influence above the equal-influence level (100 / number of predictors in that species' final model);
+#                       exposure is excluded
+PAIR_SOURCE <- "file"
+brt_pairs <- function() {
+  f <- out_path("brt_species", "BRT_Relative_Influence_Results_selected_corals.csv")
+  if (PAIR_SOURCE == "brt" && file.exists(f)) {
+    brt <- read.csv(f, stringsAsFactors = FALSE)
+    brt$equal_influence <- 100 / ave(brt$Influence, brt$Species, FUN = length)
+    pr <- brt[brt$Predictor != "Exposure" & brt$Lower95 > brt$equal_influence, c("Predictor", "Species")]
+    names(pr) <- c("coral", "fish")
+    message(nrow(pr), " influential fish x coral pairs from the BRTs (", length(unique(pr$fish)), " species)")
+    return(pr)
+  }
+  message("Using the fixed pair list data/fish_coral_pairs_figure6.csv")
+  read.csv(file.path("data", "fish_coral_pairs_figure6.csv"), stringsAsFactors = FALSE)
 }
 
 col_range <- function(df, first, last) {
