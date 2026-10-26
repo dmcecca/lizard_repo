@@ -4,8 +4,8 @@
 # exposure on species density, and the direction of each coral effect.
 #
 # Produces:  Figure 5  outputs/brt_species/Figure5_tall, Figure5_part1, Figure5_part2 (.pdf, .png)
-#            Table S4  outputs/brt_species/BRT_Relative_Influence_Results_selected_corals.csv
-#            Table S4 (formatted)  outputs/brt_species/Table_S4_species_relative_influence.csv
+#            Table S5  outputs/brt_species/BRT_Relative_Influence_Results_selected_corals.csv
+#            Table S5 (formatted)  outputs/brt_species/Table_S5_species_relative_influence.csv
 # Runtime:   many hours. Each species is saved in outputs/brt_species/cache/, so a stopped run can be restarted.
 #
 # For each species:
@@ -105,8 +105,8 @@ message(length(unique(mat$Species)), " of ", length(fish_species), " species wit
 # Signed influence is standardised across all species and predictors
 mat$SignedInfluence <- as.numeric(scale(mat$SignedInfluence))
 write.csv(mat, out_path(res_dir, "BRT_Relative_Influence_Results_selected_corals.csv"), row.names = FALSE)
-write.csv(species_influence_table(mat), out_path(res_dir, "Table_S4_species_relative_influence.csv"), row.names = FALSE)
+write.csv(species_influence_table(mat), out_path(res_dir, "Table_S5_species_relative_influence.csv"), row.names = FALSE)
 
 # ---- Figure 5 ------------------------------------------------------------------
 draw_figure5(mat, file.path(OUT_DIR, res_dir))
-message("Done: Figure 5 and Table S4 written to ", file.path(OUT_DIR, res_dir))
+message("Done: Figure 5 and Table S5 written to ", file.path(OUT_DIR, res_dir))

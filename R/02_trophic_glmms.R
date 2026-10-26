@@ -3,7 +3,7 @@
 # Temporal trends in the biomass of each trophic group in each exposure zone (same GLMM as script 01).
 #
 # Outputs (outputs/glmm_trophic/):
-#   EMM_trophic_groups_ALL_3col.pdf       Figure S1
+#   EMM_trophic_groups_ALL_3col.pdf       Figure S2
 #   Trophic_GLMM_contrasts_with_EP        Table S2 (pairwise contrasts; .csv and .docx)
 #   Trophic_GLMM_results_with_EP          population-level effects (.csv and .docx)
 #   Trophic_model_info.csv                family used for each group

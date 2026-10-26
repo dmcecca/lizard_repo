@@ -1,7 +1,7 @@
 # =============================================================================
 # 07_temporal_slopes_brms.R
 # How does each fish-coral relationship change through the disturbance-recovery cycle?
-# For every fish species x coral genus pair that the BRTs identified as influential (brt_pairs() in 00_setup.R), and in each exposure zone,
+# For every fish species x coral genus pair in the fixed pair list (brt_pairs() in 00_setup.R: data/fish_coral_pairs_figure6.csv), and in each exposure zone,
 # a Bayesian model (brms) estimates the fish-coral slope in three periods:
 #   2011 (pre-disturbance), 2015/2017 (disturbance; the average of the two years' slopes), 2020 (post-disturbance).
 # The three slopes are turned into a trajectory class, which gives the table used to draw Figure 6.
@@ -20,7 +20,7 @@
 #   comparison_with_original_table.csv         cell-by-cell comparison with the table in data/
 #   threshold_sensitivity.csv                  cells retained at stricter minimum-data rules (for the Methods / reviewer reply)
 #   unclassified_patterns.csv                  patterns not covered by the rules below (check by hand)
-# Run time: many hours (about 70-90 pairs x 4 exposure zones). Each model's slopes are saved, so a stopped run can be restarted.
+# Run time: many hours (88 pairs x 4 exposure zones). Each model's slopes are saved, so a stopped run can be restarted.
 # Needs:    brms, emmeans
 # =============================================================================
 
@@ -45,7 +45,7 @@ cache_dir <- dirname(out_path(res_dir, "model_slopes", ".keep"))
 set.seed(SEED)
 
 # ---- 1. Data ------------------------------------------------------------------
-pairs <- brt_pairs()          # the BRT-influential pairs (see 00_setup.R)
+pairs <- brt_pairs()          # the pair list set by PAIR_SOURCE in 00_setup.R
 write.csv(pairs, out_path(res_dir, "pairs_used.csv"), row.names = FALSE)
 lizard <- read_lizard()
 lizard <- lizard |>
@@ -95,11 +95,11 @@ fit_slopes <- function(fish, coral, zone) {
   cbind(`2011` = draws[, "2011"], `2015/2017` = rowMeans(draws[, c("2015", "2017")]), `2020` = draws[, "2020"])
 }
 
-# Trajectory class from the three symbols (and, for sign-consistent patterns, the change in slope size)
-#   Stable       the same symbol in all three periods, and no clear change in the size of the slope
-#   Stronger     same sign throughout and the slope gets larger (|slope 2020| > |slope 2011|, interval excludes 0),
-#                or a neutral slope that becomes + or -
-#   Weaker       same sign throughout and the slope gets smaller, or a + or - slope that becomes neutral
+# Trajectory class from the three symbols (+ positive, - negative, n neutral) and, for the same symbol throughout, the size of the slope
+#   Stable       the same symbol in all three periods, with no clear change in the size of the slope
+#   Stronger     the slope gets steeper: a neutral slope in 2011 that becomes + or - in 2020, or a + or - slope whose size
+#                increases (|slope 2020| > |slope 2011|, 95% interval of the difference excludes zero)
+#   Weaker       the slope gets flatter: a + or - slope in 2011 that becomes neutral in 2020, or a + or - slope whose size decreases
 #   Change       the slope is + in 2011 and - in 2020, or the reverse ("+ to -", "- to +")
 #   Bounce back  the same symbol in 2011 and 2020 but a different one in 2015/2017 (e.g. "+ - +", "n + n")
 classify <- function(draws) {

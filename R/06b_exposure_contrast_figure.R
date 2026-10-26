@@ -7,10 +7,10 @@
 # Input:   outputs/inla_exposure_slopes/all_exposure_slope_contrasts.csv   (from 06)
 # Outputs (outputs/exposure_contrast_summary/):
 #   Exposure_contrasts_summary.pdf / .png     Figure: (a) share of contrasts supported for each pair of zones,
-#                                             (b) share supported for each coral genus, (c) size of the slope differences
+#                                             (b) share supported for each coral genus, (c) size of the slope differences (Figure S3)
 #   Table_by_zone_contrast.csv                per pair of zones: contrasts, supported, % supported, median size of supported differences
 #   Table_by_coral_genus.csv                  per coral genus: contrasts, supported, % supported
-#   Exposure_contrast_summary_numbers.csv     the numbers quoted in the text
+#   Exposure_contrast_summary_numbers.csv     the numbers quoted in the text, Table S6
 # Slope differences are on the log scale per SD of coral cover (coral cover is standardised within each model).
 # =============================================================================
 

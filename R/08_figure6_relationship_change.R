@@ -2,14 +2,17 @@
 # 08_figure6_relationship_change.R
 # Figure 6: change in each fish-coral relationship through the disturbance-recovery cycle.
 #
-# Input:   data/fish coral relationship change table 2.csv
-#          A summary table of slope trajectories, compiled by hand from the year-specific slopes (see script 07).
+# Input:   outputs/temporal_slopes/fish_coral_relationship_change_table.csv (made by 07_temporal_slopes_brms.R);
+#          if that file is not there, data/fish coral relationship change table 2.csv is used.
+#          A summary table of slope trajectories.
 #          Row 1 = exposure zone, row 2 = trajectory (Stable, Stronger, Weaker, Change, Bounce back),
 #          columns A-B = coral genus and fish species. Each cell holds + (positive), - (negative),
 #          n (neutral: interval spans zero) or a sequence such as "+ to -".
 # Outputs (outputs/figure6/):
 #   coral_fish_relationship_tile_plot.(pdf|png)       Figure 6
 #   relationship_change_counts.csv                    counts per exposure zone and trajectory
+#   relationship_change_percent.csv                   the same as a percentage of the fish-coral pairs modelled in each zone
+#   relationship_change_pairs.csv                     every fish-coral pair with its trajectory and pattern (for the Results text)
 # =============================================================================
 
 # Sets the working directory to the project folder (the folder holding R and data) if it isn't already.
@@ -19,7 +22,8 @@ source("R/00_setup.R")
 require_pkgs(c("readr", "cowplot")); library(readr)
 
 res_dir <- "figure6"
-raw <- read_csv(CHANGE_TABLE_FILE, col_names = FALSE, show_col_types = FALSE)
+new_table <- out_path("temporal_slopes", "fish_coral_relationship_change_table.csv")
+raw <- read_csv(if (file.exists(new_table)) new_table else CHANGE_TABLE_FILE, col_names = FALSE, show_col_types = FALSE)
 
 # ---- 1. Column names from the two header rows ----------------------------------
 fill_right <- function(x) { last <- NA_character_
@@ -48,6 +52,12 @@ dat_long <- dat_wide |>
 
 write.csv(dat_long |> count(exposure, trajectory) |> pivot_wider(names_from = trajectory, values_from = n, values_fill = 0),
           out_path(res_dir, "relationship_change_counts.csv"), row.names = FALSE)
+write.csv(dat_long |> group_by(exposure) |> mutate(pairs_in_zone = n()) |> count(exposure, trajectory, pairs_in_zone) |>
+            mutate(percent = round(100 * n / pairs_in_zone, 1)),
+          out_path(res_dir, "relationship_change_percent.csv"), row.names = FALSE)
+write.csv(dat_long |> arrange(exposure, trajectory, coral_genus, fish) |>
+            transmute(exposure, trajectory, coral = coral_genus, fish = gsub("\\.", " ", fish), pattern = symbol),
+          out_path(res_dir, "relationship_change_pairs.csv"), row.names = FALSE)
 
 # Row positions follow the order of the table (top row at the top of the plot)
 fish_order <- dat_wide |> select(coral_genus, fish) |> distinct() |> mutate(row_id = row_number())
@@ -108,3 +118,4 @@ fig6 <- cowplot::plot_grid(coral_label_plot, main_plot, ncol = 2, align = "h", a
 ggsave(out_path(res_dir, "coral_fish_relationship_tile_plot.pdf"), fig6, width = 18, height = 24)
 ggsave(out_path(res_dir, "coral_fish_relationship_tile_plot.png"), fig6, width = 18, height = 24, dpi = 150)
 message("Done: Figure 6 written to ", file.path(OUT_DIR, res_dir))
+

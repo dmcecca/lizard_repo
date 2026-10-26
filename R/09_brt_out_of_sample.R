@@ -9,7 +9,7 @@
 # predictor selection step for species), then used to predict the held-out transects.
 # Metrics: RMSE, MAE, predictive R2 (1 - SSE/SST, relative to the training mean) and Spearman rho.
 #
-# Produces:  outputs/brt_out_of_sample/BRT_out_of_sample_table.csv (test-set RMSE and R2 per response)
+# Produces:  outputs/brt_out_of_sample/BRT_out_of_sample_table.csv (test-set RMSE and R2 per response, Table S4)
 #            BRT_out_of_sample_summary_by_response.csv, BRT_out_of_sample_species_overview.csv,
 #            BRT_out_of_sample_all_splits.csv
 # Runtime:   many hours for all species. Test first with SPECIES_LIMIT <- 5.

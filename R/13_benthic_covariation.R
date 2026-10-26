@@ -6,7 +6,7 @@
 #   - the other benthic categories: macroalgae, turf algae, rubble, sand, soft coral, sponge, coralline algae.
 #
 # Produces (outputs/benthic_covariation/):
-#   Benthic_correlation_matrix.pdf / .png   heatmap of all pairwise correlations (supplementary figure)
+#   Benthic_correlation_matrix.pdf / .png   heatmap of all pairwise correlations (Figure S1)
 #   Benthic_correlations_all_pairs.csv      every pair, Spearman rho and p-value
 #   Coral_vs_other_benthos.csv              each coral genus against each non-coral category
 #   Benthic_covariation_summary.csv         numbers for the text

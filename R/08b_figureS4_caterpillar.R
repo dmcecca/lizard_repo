@@ -1,16 +1,16 @@
 # =============================================================================
-# 08b_figureS3_caterpillar.R
-# Figure S3: fish-coral slopes in 2011, 2015/2017 and 2020, one caterpillar plot per exposure zone,
+# 08b_figureS4_caterpillar.R
+# Figure S4: fish-coral slopes in 2011, 2015/2017 and 2020, one caterpillar plot per exposure zone,
 # and the pattern of each fish-coral pair (e.g. Neutral, Positive-neutral, Negative-positive-negative).
-# Uses the slopes estimated by script 07, so Figure S3 and Figure 6 come from the same models and the same pairs.
+# Uses the slopes estimated by script 07, so Figure S4 and Figure 6 come from the same models and the same pairs.
 #
 # Input:   outputs/temporal_slopes/period_slopes_long.csv   (made by 07_temporal_slopes_brms.R)
-# Outputs (outputs/figureS3/):
-#   Figure_S3a_Fish-coral_slope_comparison_exposed.pdf, S3b oblique, S3c lagoon, S3d sheltered
+# Outputs (outputs/figureS4/):
+#   Figure_S4a_Fish-coral_slope_comparison_exposed.pdf, S4b oblique, S4c lagoon, S4d sheltered
 #   pattern_by_pair.csv             one row per pair and zone: the three symbols, the pattern, stable or not
 #   pattern_summary_by_zone.csv     number and percentage of pairs in each pattern, per zone
 #   stable_by_zone.csv              per zone: pairs with the same symbol in all three periods, and pairs in the Stable class of Figure 6
-#   comparison_with_hand_compiled.csv   pattern of each pair against the original hand-compiled Figure S3 (if data/figure_S3_hand_compiled_slopes.csv is present)
+#   comparison_with_hand_compiled.csv   pattern of each pair against the original hand-compiled figure (if data/figure_S3_hand_compiled_slopes.csv is present)
 # Patterns: each period's slope is + or - if its 95% interval excludes zero, otherwise n; repeated neighbours are merged
 #           (e.g. "+ n n" = Positive-neutral). Stable = Neutral, Positive or Negative in all three periods.
 # =============================================================================
@@ -21,11 +21,11 @@ if (!file.exists("R/00_setup.R")) setwd(dirname(dirname(rstudioapi::getSourceEdi
 source("R/00_setup.R")
 library(ggplot2)
 
-res_dir   <- "figureS3"
+res_dir   <- "figureS4"
 in_file   <- out_path("temporal_slopes", "period_slopes_long.csv")
 if (!file.exists(in_file)) stop("Run R/07_temporal_slopes_brms.R first (it makes ", in_file, ").", call. = FALSE)
 
-EXPOSURES <- c("Exposed", "Oblique", "Lagoon", "Sheltered")     # order of Figures S3a-d
+EXPOSURES <- c("Exposed", "Oblique", "Lagoon", "Sheltered")     # order of Figures S4a-d
 PERIODS   <- c("2011", "2015/2017", "2020")
 
 long <- read.csv(in_file, stringsAsFactors = FALSE) |>
@@ -65,11 +65,11 @@ if (file.exists(hand_file)) {
   message(nrow(cmp), " pairs are in both; ", round(100 * mean(cmp$same_pattern), 1), "% have the same pattern")
 }
 
-# ---- Figures S3a-d -------------------------------------------------------------------
-fig_names <- c(Exposed = "Figure_S3a_Fish-coral_slope_comparison_exposed.pdf",
-               Oblique = "Figure_S3b_Fish-coral_slope_comparison_oblique.pdf",
-               Lagoon  = "Figure_S3c_Fish-coral_slope_comparison_lagoon.pdf",
-               Sheltered = "Figure_S3d_Fish-coral_slope_comparison_sheltered.pdf")
+# ---- Figures S4a-d -------------------------------------------------------------------
+fig_names <- c(Exposed = "Figure_S4a_Fish-coral_slope_comparison_exposed.pdf",
+               Oblique = "Figure_S4b_Fish-coral_slope_comparison_oblique.pdf",
+               Lagoon  = "Figure_S4c_Fish-coral_slope_comparison_lagoon.pdf",
+               Sheltered = "Figure_S4d_Fish-coral_slope_comparison_sheltered.pdf")
 for (z in EXPOSURES) {
   d <- long |> filter(zone == z)
   if (!nrow(d)) next
@@ -90,3 +90,4 @@ for (z in EXPOSURES) {
          height = max(5, 1.6 + 0.09 * n_pairs + 0.15 * n_distinct(d$coral)), limitsize = FALSE)
 }
 message("Done. Results are in outputs/", res_dir, "/")
+
