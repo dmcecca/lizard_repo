@@ -27,7 +27,7 @@ REPEATS          <- 20     # number of random 70/30 splits
 TRAIN_FRAC       <- 0.70
 SPECIES_LIMIT    <- NA     # e.g. 5 to test quickly; NA = all species
 MIN_NONZERO      <- 10     # species must be present in at least this many transects
-RUN_TOTALS       <- FALSE  # TRUE also validates total density, richness and biomass
+RUN_TOTALS       <- TRUE  # Also validates total density, richness and biomass
 INCLUDE_EXPOSURE <- TRUE   # species models use the 21 coral genera + Exposure
 SEED             <- 123
 

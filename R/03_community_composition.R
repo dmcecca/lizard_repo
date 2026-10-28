@@ -56,41 +56,53 @@ prepped_t3$Benthic <- prep_community(lizard_benthic, BENTHIC_VARS_PERMANOVA, "lo
 prepped_raw <- imap(assemblages, \(a, nm) prep_community(a$data, a$vars, "none", variance_filter = FALSE))
 
 # ---- 2. nMDS (Figure 3) -----------------------------------------------------
-nmds_analysis <- function(a, p, label) {
+# Panels b, d and f show only the fitted vectors with a correlation above VECTOR_R_CUTOFF (weaker vectors are not drawn).
+# Fish and coral labels are italic (species and genus names); dots in names are shown as spaces.
+nmds_analysis <- function(a, p, label, italic_labels = FALSE) {
   nmds <- vegan::metaMDS(p$dist, k = 2, trymax = 500, trace = 0)
   message(label, " nMDS stress: ", round(nmds$stress, 3))
   nmds_data <- cbind(p$meta, as.data.frame(nmds$points)) |> mutate(Year = factor(Year, levels = sort(unique(Year))))
-
+  
   mds_plot <- ggplot(nmds_data, aes(MDS1, MDS2)) +
     geom_point(aes(colour = Exposure, shape = Exposure, alpha = Year), size = 3) +
     stat_ellipse(aes(group = Exposure, linetype = Exposure), colour = "black", linewidth = 0.8) +
     scale_colour_manual(values = exposure_cols, drop = FALSE, name = "Exposure") +
     scale_alpha_manual(name = "Year", values = year_alpha) +
     labs(title = a$titles[1], x = "NMDS Dimension 1", y = "NMDS Dimension 2") + theme_classic()
-
+  
   fit <- vegan::envfit(nmds, p$species, perm = N_PERM)
   vec <- as.data.frame(vegan::scores(fit, display = "vectors"))
-  vec$species     <- rownames(vec)
+  vec$species     <- gsub("\\.", " ", rownames(vec))
+  vec$species     <- dplyr::recode(vec$species, "sand" = "Sand", "Coral genera" = "Generic richness",
+                                   "Total scl coral cover" = "Hard coral")   # display names for benthic variables
   vec$correlation <- sqrt(vec$NMDS1^2 + vec$NMDS2^2)
-  vec$arrow_color <- ifelse(vec$correlation > VECTOR_R_CUTOFF, "black", "grey")
-  vec$label       <- ifelse(vec$correlation > VECTOR_R_CUTOFF, vec$species, NA_character_)
-
-  vector_plot <- ggplot() +
-    geom_segment(data = vec, aes(x = 0, y = 0, xend = NMDS1, yend = NMDS2, colour = arrow_color),
-                 arrow = grid::arrow(length = grid::unit(0.2, "cm")), linewidth = 0.7) +
-    ggrepel::geom_text_repel(data = subset(vec, !is.na(label)), aes(NMDS1, NMDS2, label = label),
-                             size = 3, colour = "black") +
-    scale_color_identity() +
+  vec <- vec[vec$correlation > VECTOR_R_CUTOFF, ]          # drop the weaker (previously grey) vectors
+  
+  vector_plot <- ggplot(vec) +
+    geom_segment(aes(x = 0, y = 0, xend = NMDS1, yend = NMDS2),
+                 arrow = grid::arrow(length = grid::unit(0.2, "cm")), linewidth = 0.7, colour = "black") +
+    ggrepel::geom_text_repel(aes(NMDS1, NMDS2, label = species), size = 3, colour = "black",
+                             fontface = if (italic_labels) "italic" else "plain",
+                             max.overlaps = Inf, box.padding = 0.35, point.padding = 0.1,
+                             min.segment.length = Inf, seed = 1) +
+    scale_x_continuous(expand = expansion(mult = 0.15)) + scale_y_continuous(expand = expansion(mult = 0.1)) +
     labs(title = a$titles[2], x = "NMDS Dimension 1", y = "NMDS Dimension 2") + theme_classic()
   list(mds = mds_plot, vectors = vector_plot, stress = nmds$stress)
 }
 
-nmds <- imap(assemblages, \(a, nm) nmds_analysis(a, prepped[[nm]], nm))
-fig3 <- (nmds$Fish$mds | nmds$Fish$vectors) / (nmds$Benthic$mds | nmds$Benthic$vectors) /
-        (nmds$Coral$mds | nmds$Coral$vectors)
-ggsave(out_path(res_dir, "Figure3_nMDS.png"),  fig3, width = 10, height = 12, dpi = 300)
-ggsave(out_path(res_dir, "Figure3_nMDS.pdf"),  fig3, width = 10, height = 12)
-ggsave(out_path(res_dir, "Figure3_nMDS.tiff"), fig3, width = 10, height = 12, dpi = 600, compression = "lzw")
+nmds <- list(Fish    = nmds_analysis(assemblages$Fish,    prepped$Fish,    "Fish",    italic_labels = TRUE),
+             Benthic = nmds_analysis(assemblages$Benthic, prepped$Benthic, "Benthic"),
+             Coral   = nmds_analysis(assemblages$Coral,   prepped$Coral,   "Coral",   italic_labels = TRUE))
+
+# Layout: a and b each span the full width (stacked); c-d and e-f sit below as pairs
+fig3 <- nmds$Fish$mds / nmds$Fish$vectors /
+  (nmds$Benthic$mds | nmds$Benthic$vectors) /
+  (nmds$Coral$mds   | nmds$Coral$vectors) +
+  plot_layout(heights = c(1, 1.5, 1, 1), guides = "collect")
+FIG3_W <- 10; FIG3_H <- 20
+ggsave(out_path(res_dir, "Figure3_nMDS.png"),  fig3, width = FIG3_W, height = FIG3_H, dpi = 300)
+ggsave(out_path(res_dir, "Figure3_nMDS.pdf"),  fig3, width = FIG3_W, height = FIG3_H)
+ggsave(out_path(res_dir, "Figure3_nMDS.tiff"), fig3, width = FIG3_W, height = FIG3_H, dpi = 600, compression = "lzw")
 write.csv(tibble(Dataset = names(nmds), Stress = map_dbl(nmds, "stress")),
           out_path(res_dir, "nMDS_stress.csv"), row.names = FALSE)
 

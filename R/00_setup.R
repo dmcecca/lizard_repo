@@ -141,3 +141,4 @@ prep_community <- function(data, vars, transformation = c("4th-root", "log", "no
   if (variance_filter) species_t <- species_t |> select(where(\(x) stats::var(x) > var_cutoff))
   list(meta = meta, species = species_t, dist = vegan::vegdist(species_t, method = "bray"))
 }
+

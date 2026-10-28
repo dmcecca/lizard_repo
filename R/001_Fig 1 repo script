@@ -1,0 +1,838 @@
+setwd("C:/Users/memslie/OneDrive - Australian Institute of Marine Science/Desktop/working folder/Lizard 2020/Lizard 2023 analyses")
+library(tidyverse)
+library(INLA)
+
+
+
+########################
+## this code will reproduce Figure 1
+
+
+## read in and wrangle data
+
+dat <- read.csv(file='lizard.fish.benthos.latest.csv',strip.white=T)
+
+
+
+head(dat)
+
+## create better labels for some coral groups
+
+dat.coral <- dat[,1:59] |> 
+  rename(Fungia_complex=Fungia..Lobactis.Pleuractis.Lithophyllon.complex.,
+         Coelastrea_Goniastrea=Coelastrea.Goniastrea.complex,
+         Merulina_complex=Merulina..incl..paraclavurina.)
+
+
+### summarise coral taxa for sites and years
+
+dat.site.summary <- dat.coral |> 
+  group_by(Exposure,Site,Year) |> 
+  summarise(across(
+    Acanthastrea:Heliopora,
+    list(mean = ~ mean(.x, na.rm = TRUE),
+         se = ~ sd(.x, na.rm = TRUE) / sqrt(sum(!is.na(.x)))
+    ),
+    .names = "{.col}_{.fn}"
+  ),
+  .groups = "drop"
+  )
+
+head(dat.site.summary)
+
+
+# Pivot means long for all years
+
+dat_long <- dat.site.summary %>%
+  pivot_longer(
+    cols = matches("_(mean|se)$"),
+    names_to = c("Taxon", ".value"),
+    names_sep = "_"
+  )
+
+dat_long
+
+### create lookup table of the six most abundant taxa per site
+
+top6_lookup <- dat_long %>%
+  filter(Year == 2011) %>%
+  filter(!Taxon %in% c("Turf.algae","Coral.genera")) |> 
+  group_by(Site) %>%
+  slice_max(mean, n = 6, with_ties = FALSE) %>%
+  dplyr::select(Site, Taxon)
+
+
+### create d.f. of cover for top six taxa per site and year
+
+top6_all_years <- dat_long %>%
+  inner_join(top6_lookup, by = c("Site", "Taxon")) %>%
+  dplyr::select(Site, Year, Taxon, mean, se) %>%   # drop unnecessary columns
+  arrange(Site, Taxon, Year) |> 
+  mutate(cYear=factor(Year)) 
+
+
+### ### 
+#Individual plots
+
+# 1) ensure every Site × Year × Taxon exists (so all 6 labels always appear)
+top6_all_years_complete <- top6_all_years %>%
+  group_by(Site) %>%
+  complete(Year, Taxon, fill = list(mean = 0, se = 0)) %>%
+  ungroup()
+
+# 2) one plot per Site 
+
+##site name lookup
+site_names <- top6_all_years_complete %>% distinct(Site) %>% pull(Site)
+
+############################
+## colours  by exposure
+
+site_exposure <- dat_long |> 
+  distinct(Site,Exposure)
+
+# First four ggplot default colours
+default_cols <- c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF")
+
+# Get exposure levels in consistent order
+exposure_levels <- sort(unique(site_exposure$Exposure))
+
+# Create named vector
+exposure_cols <- setNames(default_cols[seq_along(exposure_levels)],
+                          exposure_levels)
+
+exposure_cols
+
+
+site_exposure <- site_exposure %>%
+  mutate(Exposure_col = exposure_cols[Exposure])
+
+
+#########################################
+#### function for replacing full stops, and italicising genera
+
+taxon_labels <- function(x) {
+  
+  # Replace full stops and underscores with spaces
+  labels <- gsub("[._]+", " ", x)
+  
+  # Broad benthic categories that should NOT be italicised
+  broad_taxa <- c(
+    "Total HCC", "Total algae", "Turf algae",
+    "Coralline algae", "Soft coral", "Macroalgae",
+    "Rubble", "sand", "Sponge", "Coral genera","Fire coral"
+  )
+  
+  # Italicise coral genera, but not broad categories
+  italic <- !labels %in% broad_taxa
+  
+  # Return plotmath expressions
+  parse(text = ifelse(
+    italic,
+    paste0("italic(", shQuote(labels), ")"),
+    shQuote(labels)
+  ))
+}
+
+######################################
+#####  create a list of site level plots, bars filled by exposure
+
+
+plot_list <- top6_all_years_complete %>%
+  #filter(Taxon != "Turf.algae") %>%
+  group_split(Site) %>%
+  set_names(site_names) %>%
+  purrr::map(~ {
+    
+    # determine 2011 ranking for this site
+    taxon_order <- .x %>%
+      dplyr::filter(Year == 2011) %>%
+      dplyr::arrange(dplyr::desc(mean)) %>%
+      dplyr::pull(Taxon)
+    
+    # apply ordering
+    .x <- .x %>%
+      dplyr::mutate(Taxon = factor(Taxon, levels = taxon_order))
+    
+    # ---- lookup exposure colour for this site ----
+    this_site <- unique(.x$Site)
+    
+    axis_col <- site_exposure %>%
+      dplyr::filter(Site == this_site) %>%
+      dplyr::pull(Exposure_col) %>%
+      .[1]
+    
+    # ---- make a YEAR gradient that ends in the exposure colour ----
+    years <- sort(unique(.x$Year))
+    .x <- .x %>%
+      dplyr::mutate(Year = factor(Year, levels = years))
+    
+    year_cols <- setNames(
+      grDevices::colorRampPalette(c("grey92", axis_col))(length(years)),
+      as.character(years)
+    )
+    
+    ggplot(.x, aes(x = Taxon, y = mean, fill = Year)) +
+      geom_col(
+        position = position_dodge(width = 0.9),
+        width = 0.8,
+        show.legend = FALSE,
+      ) +
+      geom_errorbar(
+        aes(ymin = mean - se, ymax = mean + se),
+        position = position_dodge(width = 0.9),
+        width = 0,
+        linewidth = 0.1
+      ) +
+      scale_x_discrete(drop = FALSE,
+                       labels = taxon_labels) +
+      scale_fill_manual(values = year_cols) +
+      labs(
+        title = unique(.x$Site),
+        x = NULL,
+        y = "Cover (%)",
+        fill = "Year"
+      ) +
+      theme_classic() +
+      theme(
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        axis.title.y = element_text(size = 8),# colour = axis_col),
+        #axis.title.x = element_text(colour = axis_col),
+        plot.margin = margin(0.2, 0.2, 0.2, 0.2),
+        panel.background = element_rect(fill = NA),
+        plot.title = element_text(
+          size = 8, hjust = 0,
+          margin = margin(b = 0)#,
+          #colour = axis_col
+        ),
+        plot.background = element_rect(fill = NA, colour = NA),
+        panel.border = element_blank(),
+        # axis.line  = element_line(colour = axis_col),
+        # axis.ticks = element_line(colour = axis_col),
+        axis.text.y  = element_text(size = 8),
+        legend.position = "none"
+      )
+  })
+
+
+plot_list[[6]]
+
+
+###  save plot lists
+
+library(purrr)
+
+dir.create("site_plots", showWarnings = FALSE)
+
+iwalk(plot_list, ~ ggsave(
+  filename = file.path("site_plots", paste0(.y, "_top6.png")),
+  plot = .x,
+  width = 4,          # small footprint for map inset
+  height = 3,
+  dpi = 400,          # crisp for scaling
+  bg = "transparent"
+))
+
+
+#############################################################################
+###  create plots of broad benthic categories
+
+################################################
+##  broad benthic categories
+
+
+##  filter and summarise
+
+broad <- dat |> 
+  dplyr::select(Site,Exposure,Year,Depth,Transect,sand,Coralline.algae, Rubble,Macroalgae,Turf.algae,
+                Soft.coral,Sponge,Total.HCC,Total.algae) |> 
+  group_by(Exposure,Year) |> 
+  summarise(across(
+    sand:Total.algae,
+    list(mean = ~ mean(.x, na.rm = TRUE),
+         se = ~ sd(.x, na.rm = TRUE) / sqrt(sum(!is.na(.x)))
+    ),
+    .names = "{.col}_{.fn}"
+  ),
+  .groups = "drop"
+  )
+
+head(broad)
+
+
+
+# Pivot means long for all years
+dat_long_broad <- broad %>%
+  pivot_longer(
+    cols = matches("_(mean|se)$"),
+    names_to = c("Taxon", ".value"),
+    names_sep = "_"
+  ) |> 
+  mutate(cYear=factor(Year),
+         Taxon=factor(Taxon,
+                      levels=c("Total.HCC","Total.algae","Turf.algae","sand","Rubble",
+                               "Soft.coral","Coralline.algae","Macroalgae","Sponge")))
+
+dat_long_broad
+
+
+##############
+# lagoon_plot
+
+### NOTE - reviewer requested frames put around the benthos and genera plots to distinguish from site level plots and these were added in Illustrator
+
+
+lagoon_col <- "#7CAE00"
+
+years_lagoon <- dat_long_broad %>%
+  dplyr::filter(Exposure == "Lagoon", Taxon != "Total.algae") %>%
+  dplyr::pull(cYear) %>%
+  unique() %>%
+  sort()
+
+lagoon_year_cols <- setNames(
+  grDevices::colorRampPalette(c("grey92", lagoon_col))(length(years_lagoon)),
+  as.character(years_lagoon)
+)
+
+lagoon_plot <- ggplot(
+  dat_long_broad %>% dplyr::filter(Exposure == "Lagoon", Taxon != "Total.algae") %>%
+    dplyr::mutate(cYear = factor(cYear, levels = years_lagoon)),
+  aes(x = Taxon, y = mean, fill = cYear)
+) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    aes(ymin = mean - se, ymax = mean + se),
+    position = position_dodge(width = 0.9),
+    width = 0,
+    linewidth = 0.1
+  ) +
+  scale_x_discrete(drop = TRUE,labels = taxon_labels) +
+  scale_fill_manual(values = lagoon_year_cols) +
+  labs(
+    title = "Lagoon",
+    x = NULL,
+    y = "Cover (%)",
+    fill = "Year"
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.title.y = element_text(size = 8),
+    axis.title.x = element_text(),
+    plot.margin = margin(0.2, 0.2, 0, 0.2),
+    panel.background = element_rect(fill = NA),
+    plot.title = element_text(
+      size = 8, hjust = 0,
+      margin = margin(b = 0)
+    ),
+   # plot.background = element_rect(fill = NA, colour = NA),
+    panel.border = element_blank(),
+    # axis.line  = element_line(colour = axis_col),
+    # axis.ticks = element_line(colour = axis_col),
+    axis.text.y  = element_text(size = 8),
+    legend.position = "none",
+    plot.background=element_rect(colour='grey',
+                                 fill=NA,
+                                 linewidth=0.5,
+                                 linetype='dashed')
+  )
+
+lagoon_plot
+
+
+#########
+##
+
+
+exposed_col <- "#F8766D"
+
+years_exposed <- dat_long_broad %>%
+  dplyr::filter(Exposure == "Exposed", Taxon != "Total.algae") %>%
+  dplyr::pull(cYear) %>%
+  unique() %>%
+  sort()
+
+exposed_year_cols <- setNames(
+  grDevices::colorRampPalette(c("grey92", exposed_col))(length(years_exposed)),
+  as.character(years_exposed)
+)
+
+exposed_plot <- ggplot(
+  dat_long_broad %>%
+    dplyr::filter(Exposure == "Exposed", Taxon != "Total.algae") %>%
+    dplyr::mutate(cYear = factor(cYear, levels = years_exposed)),
+  aes(x = Taxon, y = mean, fill = cYear)
+) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    aes(ymin = mean - se, ymax = mean + se),
+    position = position_dodge(width = 0.9),
+    width = 0,
+    linewidth = 0.1
+  ) +
+  scale_x_discrete(drop = TRUE,labels = taxon_labels) +
+  scale_fill_manual(values = exposed_year_cols) +
+  labs(
+    title = "Exposed",
+    x = NULL,
+    y = "Cover (%)",
+    fill = "Year"
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.title.y = element_text(size = 8),
+    plot.margin = margin(0.2, 0.2, 0, 0.2),
+    panel.background = element_rect(fill=NA),
+    strip.text = element_blank(),
+    strip.background = element_blank(),
+    plot.title = element_text(size = 8, hjust = 0, margin = margin(b = 0)),
+    plot.background = element_rect(colour='grey',
+                                   fill = NA,
+                                   linewidth=0.5,
+                                   linetype='dashed'),
+    panel.border = element_blank(),
+    # axis.line  = element_line(colour = exposed_col),
+    # axis.ticks = element_line(colour = exposed_col),
+    axis.text  = element_text(size = 8),
+    legend.position = "none"
+  )
+
+exposed_plot
+
+
+#######
+##
+
+oblique_col <- "#00BFC4"
+
+years_oblique <- dat_long_broad %>%
+  dplyr::filter(Exposure == "Oblique", Taxon != "Total.algae") %>%
+  dplyr::pull(cYear) %>%
+  unique() %>%
+  sort()
+
+oblique_year_cols <- setNames(
+  grDevices::colorRampPalette(c("grey92", oblique_col))(length(years_oblique)),
+  as.character(years_oblique)
+)
+
+oblique_plot <- ggplot(
+  dat_long_broad %>%
+    dplyr::filter(Exposure == "Oblique", Taxon != "Total.algae") %>%
+    dplyr::mutate(cYear = factor(cYear, levels = years_oblique)),
+  aes(x = Taxon, y = mean, fill = cYear)
+) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    aes(ymin = mean - se, ymax = mean + se),
+    position = position_dodge(width = 0.9),
+    width = 0,
+    linewidth = 0.1
+  ) +
+  scale_x_discrete(drop = TRUE,labels = taxon_labels) +
+  scale_fill_manual(values = oblique_year_cols) +
+  labs(
+    title = "Oblique",
+    x = NULL,
+    y = "Cover (%)",
+    fill = "Year"
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.title.y = element_text(size = 8),
+    plot.margin = margin(0.2, 0.2, 0, 0.2),
+    panel.background = element_rect(fill=NA),
+    strip.text = element_blank(),
+    strip.background = element_blank(),
+    plot.title = element_text(size = 8, hjust = 0, margin = margin(b = 0)),
+    plot.background = element_rect(colour='grey',
+                                   fill=NA,
+                                   linewidth=0.5,
+                                   linetype='dashed'),
+    panel.border = element_blank(),
+    # axis.line  = element_line(colour = oblique_col),
+    # axis.ticks = element_line(colour = oblique_col),
+    axis.text  = element_text(size = 8),
+    legend.position = "none"
+  )
+
+oblique_plot
+
+
+#####
+##
+
+sheltered_col <- "#C77CFF"
+
+years_sheltered <- dat_long_broad %>%
+  dplyr::filter(Exposure == "Sheltered", Taxon != "Total.algae") %>%
+  dplyr::pull(cYear) %>%
+  unique() %>%
+  sort()
+
+sheltered_year_cols <- setNames(
+  grDevices::colorRampPalette(c("grey92", sheltered_col))(length(years_sheltered)),
+  as.character(years_sheltered)
+)
+
+sheltered_plot <- ggplot(
+  dat_long_broad %>%
+    dplyr::filter(Exposure == "Sheltered", Taxon != "Total.algae") %>%
+    dplyr::mutate(cYear = factor(cYear, levels = years_sheltered)),
+  aes(x = Taxon, y = mean, fill = cYear)
+) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  geom_errorbar(
+    aes(ymin = mean - se, ymax = mean + se),
+    position = position_dodge(width = 0.9),
+    width = 0,
+    linewidth = 0.1
+  ) +
+  scale_x_discrete(drop = TRUE,labels = taxon_labels) +
+  scale_fill_manual(values = sheltered_year_cols) +
+  labs(
+    title = "Sheltered",
+    x = NULL,
+    y = "Cover (%)",
+    fill = "Year"
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+    axis.title.y = element_text(size = 8),
+    plot.margin = margin(0.2, 0.2, 0, 0.2),
+    panel.background = element_rect(fill=NA),
+    strip.text = element_blank(),
+    strip.background = element_blank(),
+    plot.title = element_text(size = 8, hjust = 0, margin = margin(b = 0)),
+    plot.background = element_rect(colour='grey',
+                                   fill=NA,
+                                   linewidth=0.5,
+                                   linetype='dashed'),
+    panel.border = element_blank(),
+    # axis.line  = element_line(colour = sheltered_col),
+    # axis.ticks = element_line(colour = sheltered_col),
+    axis.text  = element_text(size = 8),
+    legend.position = "none"
+  )
+
+sheltered_plot
+
+
+################################################
+## extra exposure-level plots for top six coral genera
+## KEEP existing broad exposure plots as well
+
+dat.exposure.genera.summary <- dat.coral %>%
+  group_by(Exposure, Year) %>%
+  summarise(across(
+    Acanthastrea:Heliopora,
+    list(mean = ~ mean(.x, na.rm = TRUE),
+         se   = ~ sd(.x, na.rm = TRUE) / sqrt(sum(!is.na(.x)))),
+    .names = "{.col}_{.fn}"
+  ),
+  .groups = "drop"
+  )
+
+# Pivot long
+dat_long_exposure_genera <- dat.exposure.genera.summary %>%
+  pivot_longer(
+    cols = matches("_(mean|se)$"),
+    names_to = c("Taxon", ".value"),
+    names_sep = "_"
+  )
+
+# Top 6 genera in 2011 for each exposure
+# explicitly remove Coral.genera
+top6_exposure_genera_lookup <- dat_long_exposure_genera %>%
+  filter(Year == 2011) %>%
+  filter(!Taxon %in% c("Coral.genera", "Turf.algae")) %>%
+  group_by(Exposure) %>%
+  slice_max(mean, n = 6, with_ties = FALSE) %>%
+  dplyr::select(Exposure, Taxon)
+
+# keep those taxa across all years
+top6_exposure_genera_all_years <- dat_long_exposure_genera %>%
+  inner_join(top6_exposure_genera_lookup, by = c("Exposure", "Taxon")) %>%
+  dplyr::select(Exposure, Year, Taxon, mean, se) %>%
+  arrange(Exposure, Taxon, Year)
+
+# ensure every Exposure x Year x Taxon exists
+top6_exposure_genera_complete <- top6_exposure_genera_all_years %>%
+  group_by(Exposure) %>%
+  complete(Year, Taxon, fill = list(mean = 0, se = 0)) %>%
+  ungroup()
+
+# one plot per exposure
+exposure_names <- top6_exposure_genera_complete %>%
+  distinct(Exposure) %>%
+  pull(Exposure)
+
+exposure_genera_plot_list <- top6_exposure_genera_complete %>%
+  group_split(Exposure) %>%
+  set_names(exposure_names) %>%
+  purrr::map(~ {
+    
+    # determine 2011 ranking for this exposure
+    taxon_order <- .x %>%
+      dplyr::filter(Year == 2011) %>%
+      dplyr::arrange(dplyr::desc(mean)) %>%
+      dplyr::pull(Taxon)
+    
+    # apply ordering
+    .x <- .x %>%
+      dplyr::mutate(Taxon = factor(Taxon, levels = taxon_order))
+    
+    # lookup exposure colour
+    this_exposure <- unique(.x$Exposure)
+    axis_col <- exposure_cols[[as.character(this_exposure)]]
+    
+    # make year gradient ending in the exposure colour
+    years <- sort(unique(.x$Year))
+    .x <- .x %>%
+      dplyr::mutate(Year = factor(Year, levels = years))
+    
+    year_cols <- setNames(
+      grDevices::colorRampPalette(c("grey92", axis_col))(length(years)),
+      as.character(years)
+    )
+    
+    ggplot(.x, aes(x = Taxon, y = mean, fill = Year)) +
+      geom_col(
+        position = position_dodge(width = 0.9),
+        width = 0.8,
+        show.legend = FALSE
+      ) +
+      geom_errorbar(
+        aes(ymin = mean - se, ymax = mean + se),
+        position = position_dodge(width = 0.9),
+        width = 0,
+        linewidth = 0.1
+      ) +
+      scale_x_discrete(drop = FALSE,labels=taxon_labels) +
+      scale_fill_manual(values = year_cols) +
+      labs(
+        title = paste0(this_exposure, " genera"),
+        x = NULL,
+        y = "Cover (%)",
+        fill = "Year"
+      ) +
+      theme_classic() +
+      theme(
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 8),
+        axis.title.y = element_text(size = 8),
+        plot.margin = margin(0, 0.2, 0.2, 0.2),
+        panel.background = element_rect(fill = NA),
+        strip.text = element_blank(),
+        strip.background = element_blank(),
+        plot.title = element_text(size = 8, hjust = 0, margin = margin(b = 0)),
+        plot.background = element_rect(linewidth=0.5,
+                                       fill = NA, 
+                                       colour = 'grey',
+                                       linetype='dashed'),
+        panel.border = element_blank(),
+        # axis.line  = element_line(colour = axis_col),
+        # axis.ticks = element_line(colour = axis_col),
+        axis.text  = element_text(size = 8),
+        legend.position = "none"
+      )
+  })
+
+# inspect
+exposure_genera_plot_list[["Lagoon"]]
+exposure_genera_plot_list[["Exposed"]]
+exposure_genera_plot_list[["Oblique"]]
+exposure_genera_plot_list[["Sheltered"]]
+
+
+
+##############################################################
+#### create grey_scale legend
+
+all_years <- sort(unique(dat_long_broad$cYear))
+
+grey_year_cols <- setNames(
+  grDevices::colorRampPalette(c("grey85", "grey25"))(length(all_years)),
+  as.character(all_years)
+)
+
+legend_source <- ggplot(
+  data.frame(
+    cYear = factor(all_years, levels = all_years),
+    x = 1,
+    y = 1
+  ),
+  aes(x = x, y = y, fill = cYear)
+) +
+  geom_tile() +
+  scale_fill_manual(values = grey_year_cols) +
+  guides(
+    fill = guide_legend(
+      title = "Year",
+      nrow = 1,
+      byrow = TRUE,
+      keywidth  = unit(0.45, "cm"),
+      keyheight = unit(0.45, "cm")
+    )
+  ) +
+  theme_void() +
+  theme(
+    legend.position = "bottom",
+    legend.title = element_text(size = 7),
+    legend.text  = element_text(size = 6),
+    legend.spacing.x = unit(0.15, "cm"),
+    legend.box.margin = margin(0, 0, 0, 0),
+    legend.margin = margin(0, 0, 0, 0)
+  )
+
+
+library(cowplot)
+
+legend_only <- cowplot::get_legend(legend_source)
+legend_plot <- cowplot::ggdraw(legend_only)
+
+
+#####################################################################################################
+### place on map
+
+
+
+library(sf)
+library(ggplot2)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(osmdata)
+library(stringr)
+library(patchwork)
+library(png)
+library(grid)
+
+
+
+
+#################
+### read in map 
+
+library(magick)
+
+
+# Trim uniform border (increase fuzz if needed)
+img <- image_read("Figure 1_Lizard_Island_Map_Draft_1.png")
+img_trim <- image_trim(img, fuzz = 35)   # try 5–30 if needed
+image_write(img_trim, "Figure_1_Lizard_Island_Map_trim.png")
+
+island_plot <- wrap_elements(
+  full = rasterGrob(png::readPNG("Figure_1_Lizard_Island_Map_trim.png"),
+                    interpolate = TRUE)
+)
+
+
+island_plot <- wrap_elements(
+  full = grobTree(
+    rectGrob(gp = gpar(fill = "white", col = NA)),
+    rasterGrob(
+      png::readPNG("Figure_1_Lizard_Island_Map_trim.png"),
+      x = 0.5, y = 0.5,
+      width  = unit(0.92, "npc"),
+      height = unit(0.92, "npc"),
+      interpolate = TRUE
+    )
+  )
+)
+
+
+######################################################################
+#####
+## plot
+
+########  grids for extra genera level exposure plots
+
+
+plots_named <- list(
+  A = sheltered_plot,                               # broad sheltered
+  B = plot_list[[6]],                               # Granite
+  C = plot_list[[9]],                               # North Reef
+  D = plot_list[[14]],                              # Washing Machine
+  E = plot_list[[3]],                               # Bommie Bay
+  F = oblique_plot,                                 # broad oblique
+  
+  G = exposure_genera_plot_list[["Sheltered"]],     # sheltered genera
+  H = plot_list[[12]],                              # Resort
+  I = island_plot,                                  # map
+  J = plot_list[[13]],                              # Steves Gully
+  K = exposure_genera_plot_list[["Oblique"]],       # oblique genera
+  
+  L = plot_list[[1]],                               # Big Vickys
+  M = plot_list[[11]],                              # Pidgin Point
+  
+  N = lagoon_plot,                                  # broad lagoon
+  O = plot_list[[2]],                               # Blue Lagoon
+  P = plot_list[[4]],                               # Coconut
+  Q = exposed_plot,                                 # broad exposed
+  
+  R = exposure_genera_plot_list[["Lagoon"]],        # lagoon genera
+  S = plot_list[[5]],                               # Entrance Bommie
+  T = plot_list[[10]],                              # Palfrey Lagoon
+  U = plot_list[[7]],                               # LTMP1
+  V = plot_list[[8]],                               # LTMP3
+  W = exposure_genera_plot_list[["Exposed"]]        # exposed genera
+)
+
+
+design <- c(
+  # row 1
+  patchwork::area(t = 1, l = 1, b = 1, r = 1), # A  Sheltered
+  patchwork::area(t = 1, l = 2, b = 1, r = 2), # B  Granite
+  patchwork::area(t = 1, l = 3, b = 1, r = 3), # C  North Reef
+  patchwork::area(t = 1, l = 4, b = 1, r = 4), # D  Washing Machine
+  patchwork::area(t = 1, l = 5, b = 1, r = 5), # E  Bommie Bay
+  patchwork::area(t = 1, l = 6, b = 1, r = 6), # F  Oblique
+  
+  # row 2
+  patchwork::area(t = 2, l = 1, b = 2, r = 1), # G  Sheltered genera
+  patchwork::area(t = 2, l = 2, b = 2, r = 2), # H  Resort
+  patchwork::area(t = 2, l = 3, b = 4, r = 4), # I  Map
+  patchwork::area(t = 2, l = 5, b = 2, r = 5), # J  Steves Gully
+  patchwork::area(t = 2, l = 6, b = 2, r = 6), # K  Oblique genera
+  
+  # row 3
+  patchwork::area(t = 3, l = 2, b = 3, r = 2), # L  Big Vickys
+  patchwork::area(t = 3, l = 5, b = 3, r = 5), # M  Pidgin Point
+  
+  # row 4
+  patchwork::area(t = 4, l = 1, b = 4, r = 1), # N  Lagoon
+  patchwork::area(t = 4, l = 2, b = 4, r = 2), # O  Blue Lagoon
+  patchwork::area(t = 4, l = 5, b = 4, r = 5), # P  Coconut
+  patchwork::area(t = 4, l = 6, b = 4, r = 6), # Q  Exposed
+  
+  # row 5
+  patchwork::area(t = 5, l = 1, b = 5, r = 1), # R  Lagoon genera
+  patchwork::area(t = 5, l = 2, b = 5, r = 2), # S  Entrance Bommie
+  patchwork::area(t = 5, l = 3, b = 5, r = 3), # T  Palfrey Lagoon
+  patchwork::area(t = 5, l = 4, b = 5, r = 4), # U  LTMP1
+  patchwork::area(t = 5, l = 5, b = 5, r = 5), # V  LTMP3
+  patchwork::area(t = 5, l = 6, b = 5, r = 6)  # W  Exposed genera
+)
+
+
+
+main_panel<- wrap_plots(plots_named, design = design)
+
+final_plot <- main_panel /
+  wrap_elements(full = legend_only) +
+  #plot_layout(heights = c(20, 1)) &
+  plot_layout(heights = c(24, 1)) &
+  theme(plot.margin = margin(1, 1, 1, 1))
+
+final_plot +
+  plot_annotation(tag_levels = "a")
+
+final_plot
+
+
+ggsave(final_plot,file='coral_map3.pdf',height=9,width=10)
+ggsave(final_plot,file='coral_map3.png',height=9,width=10, dpi = 300, type = "cairo")
+
