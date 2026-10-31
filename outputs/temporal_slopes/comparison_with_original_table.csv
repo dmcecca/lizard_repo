@@ -1,0 +1,326 @@
+"coral","fish","zone","original_trajectory","original_cell","new_trajectory","new_cell","same_class","same_cell"
+"Porites","Amblyglyphidodon.curacao","Lagoon","Stable","+","Change","+ to -",FALSE,FALSE
+"Porites","Amblyglyphidodon.curacao","Sheltered","Change","+ to -","Bounce back","- + -",FALSE,FALSE
+"Porites","Amblyglyphidodon.curacao","Oblique","Change","- to +","Stronger","+",FALSE,FALSE
+"Porites","Amblyglyphidodon.curacao","Exposed","Bounce back","+ - +","Bounce back","+ - +",TRUE,TRUE
+"Porites","Amblyglyphidodon.leucogaster","Lagoon","Weaker","-","Weaker","-",TRUE,TRUE
+"Porites","Amblyglyphidodon.leucogaster","Sheltered","Change","- to +",NA,NA,NA,NA
+"Porites","Amblyglyphidodon.leucogaster","Exposed","Change","+ to -","Change","+ to -",TRUE,TRUE
+"Porites","Chromis.viridis","Lagoon","Change","+ to -","Bounce back","n - n",FALSE,FALSE
+"Porites","Chromis.viridis","Oblique","Stable","n",NA,NA,NA,NA
+"Porites","Chromis.viridis","Exposed","Stable","-",NA,NA,NA,NA
+"Porites","Pomacentrus.lepidogenys","Oblique","Stable","+","Stronger","+",FALSE,FALSE
+"Porites","Pomacentrus.lepidogenys","Exposed","Bounce back","+ - +","Stronger","+",FALSE,FALSE
+"Porites","Acanthurus.olivaceus","Lagoon","Change","- to +",NA,NA,NA,NA
+"Porites","Acanthurus.olivaceus","Sheltered","Bounce back","n + n","Stable","n",FALSE,FALSE
+"Porites","Acanthurus.olivaceus","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Acanthurus.olivaceus","Exposed","Stronger","+","Change","- to +",FALSE,FALSE
+"Porites","Acanthurus.nigrofuscus","Lagoon","Weaker","-","Stronger","+",FALSE,FALSE
+"Porites","Acanthurus.nigrofuscus","Sheltered","Weaker","-","Stronger","-",FALSE,FALSE
+"Porites","Acanthurus.nigrofuscus","Oblique","Stable","+","Stronger","+",FALSE,FALSE
+"Porites","Acanthurus.nigrofuscus","Exposed","Change","- to +","Weaker","-",FALSE,FALSE
+"Porites","Ctenochaetus.striatus","Lagoon","Stable","n","Stronger","-",FALSE,FALSE
+"Porites","Ctenochaetus.striatus","Sheltered","Stable","n","Weaker","+",FALSE,FALSE
+"Porites","Ctenochaetus.striatus","Oblique","Stable","+","Weaker","+",FALSE,FALSE
+"Porites","Ctenochaetus.striatus","Exposed","Stronger","-","Stronger","-",TRUE,TRUE
+"Porites","Naso.unicornis","Lagoon","Change","- to +",NA,NA,NA,NA
+"Porites","Naso.unicornis","Sheltered","Change","- to +","Stable","n",FALSE,FALSE
+"Porites","Naso.unicornis","Oblique","Stronger","+","Stronger","+",TRUE,TRUE
+"Porites","Naso.unicornis","Exposed","Change","- to +","Change","- to +",TRUE,TRUE
+"Porites","Siganus.doliatus","Lagoon","Weaker","-","Stable","n",FALSE,FALSE
+"Porites","Siganus.doliatus","Sheltered","Weaker","-","Stable","n",FALSE,FALSE
+"Porites","Siganus.doliatus","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Siganus.doliatus","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Centropyge.bicolor","Lagoon","Bounce back","- n -","Weaker","-",FALSE,FALSE
+"Porites","Centropyge.bicolor","Sheltered","Bounce back","- n -","Stronger","+",FALSE,FALSE
+"Porites","Centropyge.bicolor","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Centropyge.bicolor","Exposed","Stronger","-","Stronger","-",TRUE,TRUE
+"Porites","Chlorurus.microrhinos","Lagoon","Stable","+","Bounce back","n + n",FALSE,FALSE
+"Porites","Chlorurus.microrhinos","Sheltered","Stable","+",NA,NA,NA,NA
+"Porites","Chlorurus.microrhinos","Oblique","Stronger","-","Stronger","-",TRUE,TRUE
+"Porites","Chlorurus.microrhinos","Exposed","Change","- to +","Change","- to +",TRUE,TRUE
+"Porites","Chlorurus.spilurus","Lagoon","Stronger","+","Bounce back","n + n",FALSE,FALSE
+"Porites","Chlorurus.spilurus","Sheltered","Stronger","+","Stable","n",FALSE,FALSE
+"Porites","Chlorurus.spilurus","Oblique","Weaker","+","Bounce back","n + n",FALSE,FALSE
+"Porites","Chlorurus.spilurus","Exposed","Stable","-","Stable","-",TRUE,TRUE
+"Porites","Scarus.altipinnis","Lagoon","Change","- to +","Stable","n",FALSE,FALSE
+"Porites","Scarus.altipinnis","Sheltered","Stronger","+","Stronger","+",TRUE,TRUE
+"Porites","Scarus.altipinnis","Exposed","Change","+ to -","Weaker","+",FALSE,FALSE
+"Porites","Scarus.niger","Lagoon","Change","- to +","Bounce back","n - n",FALSE,FALSE
+"Porites","Scarus.niger","Sheltered","Change","- to +","Weaker","+",FALSE,FALSE
+"Porites","Scarus.niger","Oblique","Stronger","-","Stronger","-",TRUE,TRUE
+"Porites","Scarus.niger","Exposed","Weaker","-","Change","- to +",FALSE,FALSE
+"Porites","Scarus.psittacus","Lagoon","Stable","-","Stable","n",TRUE,FALSE
+"Porites","Scarus.psittacus","Sheltered","Stable","-","Bounce back","n - n",FALSE,FALSE
+"Porites","Scarus.psittacus","Oblique","Stronger","-","Bounce back","- n -",FALSE,FALSE
+"Porites","Scarus.psittacus","Exposed","Stronger","-","Stronger","-",TRUE,TRUE
+"Porites","Cephalopholis.cyanostigma","Lagoon","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Cephalopholis.cyanostigma","Sheltered","Stable","n","Stronger","+",FALSE,FALSE
+"Porites","Cephalopholis.cyanostigma","Oblique","Bounce back","n + n","Bounce back","n + n",TRUE,TRUE
+"Porites","Cephalopholis.cyanostigma","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Plectropomus.leopardus","Lagoon","Weaker","-","Stable","n",FALSE,FALSE
+"Porites","Plectropomus.leopardus","Sheltered","Weaker","-","Stable","n",FALSE,FALSE
+"Porites","Plectropomus.leopardus","Oblique","Stronger","+","Stronger","+",TRUE,TRUE
+"Porites","Plectropomus.leopardus","Exposed","Weaker","-","Weaker","-",TRUE,TRUE
+"Porites","Diagramma.pictum","Lagoon","Bounce back","- + -","Weaker","+",FALSE,FALSE
+"Porites","Diagramma.pictum","Sheltered","Change","- to +","Stable","n",FALSE,FALSE
+"Porites","Diagramma.pictum","Oblique","Stable","n",NA,NA,NA,NA
+"Porites","Diagramma.pictum","Exposed","Stable","n",NA,NA,NA,NA
+"Porites","Plectorhinchus.chrysotaenia","Lagoon","Change","- to +",NA,NA,NA,NA
+"Porites","Plectorhinchus.chrysotaenia","Sheltered","Bounce back","n + n",NA,NA,NA,NA
+"Porites","Lutjanus.carponotatus","Lagoon","Weaker","+","Stable","n",FALSE,FALSE
+"Porites","Lutjanus.carponotatus","Sheltered","Weaker","+","Stable","n",FALSE,FALSE
+"Porites","Lutjanus.carponotatus","Oblique","Stronger","-","Stable","n",FALSE,FALSE
+"Porites","Lutjanus.carponotatus","Exposed","Bounce back","+ n +","Weaker","+",FALSE,FALSE
+"Porites","Scolopsis.bilineata","Lagoon","Weaker","-","Weaker","+",TRUE,FALSE
+"Porites","Scolopsis.bilineata","Sheltered","Weaker","-","Stronger","+",FALSE,FALSE
+"Porites","Scolopsis.bilineata","Oblique","Stronger","-","Stronger","-",TRUE,TRUE
+"Porites","Scolopsis.bilineata","Exposed","Stable","n","Stronger","+",FALSE,FALSE
+"Porites","Chaetodon.kleinii","Lagoon","Bounce back","- n -",NA,NA,NA,NA
+"Porites","Chaetodon.kleinii","Sheltered","Stronger","-","Stable","-",FALSE,FALSE
+"Porites","Chaetodon.kleinii","Oblique","Weaker","-","Stable","n",FALSE,FALSE
+"Porites","Chaetodon.lunulatus","Lagoon","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Chaetodon.lunulatus","Sheltered","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Chaetodon.lunulatus","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Chaetodon.lunulatus","Exposed","Bounce back","+ n +","Weaker","+",FALSE,FALSE
+"Porites","Chaetodon.vagabundus","Lagoon","Weaker","-","Stable","n",FALSE,FALSE
+"Porites","Chaetodon.vagabundus","Sheltered","Weaker","-","Stronger","+",FALSE,FALSE
+"Porites","Chaetodon.vagabundus","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Chaetodon.vagabundus","Exposed","Weaker","-","Weaker","-",TRUE,TRUE
+"Porites","Cheilinus.fasciatus","Lagoon","Stronger","+","Stable","n",FALSE,FALSE
+"Porites","Cheilinus.fasciatus","Sheltered","Stronger","+","Stable","n",FALSE,FALSE
+"Porites","Cheilinus.fasciatus","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Cheilinus.fasciatus","Exposed","Stronger","+","Stronger","+",TRUE,TRUE
+"Porites","Coris.batuensis","Lagoon","Stable","-","Stable","n",TRUE,FALSE
+"Porites","Coris.batuensis","Sheltered","Stable","-","Stable","n",TRUE,FALSE
+"Porites","Coris.batuensis","Oblique","Stronger","-","Stronger","-",TRUE,TRUE
+"Porites","Coris.batuensis","Exposed","Stronger","+","Change","- to +",FALSE,FALSE
+"Porites","Epibulus.insidiator","Lagoon","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Epibulus.insidiator","Sheltered","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Epibulus.insidiator","Oblique","Change","- to +","Bounce back","n + n",FALSE,FALSE
+"Porites","Epibulus.insidiator","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Halichoeres.melanurus","Lagoon","Stable","-","Stronger","-",FALSE,FALSE
+"Porites","Halichoeres.melanurus","Sheltered","Stable","-","Bounce back","n + n",FALSE,FALSE
+"Porites","Halichoeres.melanurus","Oblique","Bounce back","- + -","Weaker","-",FALSE,FALSE
+"Porites","Halichoeres.melanurus","Exposed","Bounce back","- n -","Weaker","-",FALSE,FALSE
+"Porites","Hemigymnus.melapterus","Lagoon","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Hemigymnus.melapterus","Sheltered","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Hemigymnus.melapterus","Oblique","Stronger","+","Stable","n",FALSE,FALSE
+"Porites","Labroides.dimidiatus","Sheltered","Stable","-","Stable","n",TRUE,FALSE
+"Porites","Labroides.dimidiatus","Oblique","Change","- to +","Weaker","-",FALSE,FALSE
+"Porites","Labroides.dimidiatus","Exposed","Stronger","+","Stronger","+",TRUE,TRUE
+"Porites","Chrysiptera.caesifrons","Lagoon","Stable","-",NA,NA,NA,NA
+"Porites","Chrysiptera.caesifrons","Sheltered","Stronger","-",NA,NA,NA,NA
+"Porites","Chrysiptera.caesifrons","Oblique","Stable","n","Bounce back","n - n",FALSE,FALSE
+"Porites","Chrysiptera.caesifrons","Exposed","Change","+ to -","Stronger","-",FALSE,FALSE
+"Porites","Neoglyphidodon.nigroris","Lagoon","Change","- to +","Weaker","+",FALSE,FALSE
+"Porites","Neoglyphidodon.nigroris","Sheltered","Change","- to +",NA,NA,NA,NA
+"Porites","Neoglyphidodon.nigroris","Exposed","Stronger","-","Stable","-",FALSE,FALSE
+"Porites","Dischistodus.perspicillatus","Lagoon","Weaker","-","Stable","n",FALSE,FALSE
+"Porites","Dischistodus.perspicillatus","Sheltered","Weaker","-","Stable","n",FALSE,FALSE
+"Porites","Dischistodus.prosopotaenia","Lagoon","Stronger","-","Bounce back","n - n",FALSE,FALSE
+"Porites","Dischistodus.prosopotaenia","Sheltered","Stronger","-","Bounce back","n + n",FALSE,FALSE
+"Porites","Dischistodus.prosopotaenia","Oblique","Stronger","-","Stable","n",FALSE,FALSE
+"Porites","Hemiglyphidodon.plagiometopon","Sheltered","Stable","+",NA,NA,NA,NA
+"Porites","Hemiglyphidodon.plagiometopon","Oblique","Stable","n",NA,NA,NA,NA
+"Porites","Hemiglyphidodon.plagiometopon","Exposed","Stable","n",NA,NA,NA,NA
+"Porites","Pomacentrus.adelus","Lagoon","Weaker","-","Weaker","-",TRUE,TRUE
+"Porites","Pomacentrus.adelus","Sheltered","Weaker","-","Weaker","+",TRUE,FALSE
+"Porites","Pomacentrus.adelus","Oblique","Bounce back","- + -","Bounce back","- + -",TRUE,TRUE
+"Porites","Pomacentrus.adelus","Exposed","Weaker","+","Change","+ to -",FALSE,FALSE
+"Porites","Pomacentrus.wardi","Lagoon","Stable","+","Weaker","-",FALSE,FALSE
+"Porites","Pomacentrus.wardi","Sheltered","Stable","+","Bounce back","+ n +",FALSE,FALSE
+"Porites","Pomacentrus.wardi","Oblique","Change","+ to -","Stronger","+",FALSE,FALSE
+"Porites","Pomacentrus.wardi","Exposed","Stronger","-","Stronger","-",TRUE,TRUE
+"Porites","Pomacentrus.grammorhynchus","Lagoon","Stable","+","Bounce back","+ n +",FALSE,FALSE
+"Porites","Pomacentrus.grammorhynchus","Oblique","Stable","n",NA,NA,NA,NA
+"Porites","Parupeneus.crassilabris","Lagoon","Weaker","-",NA,NA,NA,NA
+"Porites","Parupeneus.crassilabris","Sheltered","Weaker","-","Stable","n",FALSE,FALSE
+"Porites","Parupeneus.crassilabris","Exposed","Stable","n","Stronger","+",FALSE,FALSE
+"Porites","Parupeneus.multifasciatus","Lagoon","Weaker","-","Stable","n",FALSE,FALSE
+"Porites","Parupeneus.multifasciatus","Sheltered","Weaker","-","Bounce back","n - n",FALSE,FALSE
+"Porites","Parupeneus.multifasciatus","Oblique","Stable","-","Stronger","-",FALSE,FALSE
+"Porites","Parupeneus.multifasciatus","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Porites","Sufflamen.chrysopterus","Lagoon","Weaker","-",NA,NA,NA,NA
+"Porites","Sufflamen.chrysopterus","Sheltered","Weaker","-","Stronger","-",FALSE,FALSE
+"Porites","Sufflamen.chrysopterus","Oblique","Stronger","+","Stronger","+",TRUE,TRUE
+"Porites","Sufflamen.chrysopterus","Exposed","Stable","n","Bounce back","n - n",FALSE,FALSE
+"Porites","Pomacentrus.amboinensis","Lagoon","Change","- to +","Weaker","+",FALSE,FALSE
+"Porites","Pomacentrus.amboinensis","Sheltered","Change","- to +","Change","+ to -",TRUE,FALSE
+"Porites","Pomacentrus.amboinensis","Oblique","Change","- to +","Change","- to +",TRUE,TRUE
+"Porites","Pomacentrus.amboinensis","Exposed","Change","- to +","Weaker","-",FALSE,FALSE
+"Porites","Pomacentrus.brachialis","Lagoon","Bounce back","- + -","Bounce back","- + -",TRUE,TRUE
+"Porites","Pomacentrus.brachialis","Sheltered","Bounce back","- + -","Stable","+",FALSE,FALSE
+"Porites","Pomacentrus.brachialis","Oblique","Bounce back","- + -","Bounce back","- + -",TRUE,TRUE
+"Porites","Pomacentrus.brachialis","Exposed","Change","+ to -","Change","+ to -",TRUE,TRUE
+"Physogyra","Cheilinus.chlorourus","Lagoon","Stronger","+",NA,NA,NA,NA
+"Physogyra","Cheilinus.chlorourus","Sheltered","Stronger","+","Bounce back","n + n",FALSE,FALSE
+"Physogyra","Cheilinus.chlorourus","Exposed","Stable","n",NA,NA,NA,NA
+"Physogyra","Thalassoma.lunare","Lagoon","Stable","+",NA,NA,NA,NA
+"Physogyra","Thalassoma.lunare","Sheltered","Stable","+","Stronger","+",FALSE,FALSE
+"Physogyra","Thalassoma.lunare","Exposed","Stronger","+",NA,NA,NA,NA
+"Physogyra","Pomacentrus.amboinensis","Lagoon","Stable","+",NA,NA,NA,NA
+"Physogyra","Pomacentrus.amboinensis","Sheltered","Stable","+","Bounce back","- + -",FALSE,FALSE
+"Physogyra","Cephalopholis.boenak","Lagoon","Change","- to +",NA,NA,NA,NA
+"Physogyra","Cephalopholis.boenak","Sheltered","Bounce back","n + n","Bounce back","n + n",TRUE,TRUE
+"Physogyra","Chaetodon.auriga","Lagoon","Stable","n",NA,NA,NA,NA
+"Physogyra","Chaetodon.auriga","Sheltered","Stronger","-","Stable","n",FALSE,FALSE
+"Physogyra","Chrysiptera.flavipinnis","Lagoon","Stronger","+",NA,NA,NA,NA
+"Physogyra","Halichoeres.melanurus","Lagoon","Stable","+",NA,NA,NA,NA
+"Physogyra","Halichoeres.melanurus","Sheltered","Stable","+","Stronger","+",FALSE,FALSE
+"Physogyra","Halichoeres.melanurus","Exposed","Stable","n",NA,NA,NA,NA
+"Physogyra","Pomacentrus.chrysurus","Lagoon","Stable","-",NA,NA,NA,NA
+"Physogyra","Pomacentrus.chrysurus","Sheltered","Stable","-","Bounce back","- + -",FALSE,FALSE
+"Physogyra","Pomacentrus.chrysurus","Exposed","Stable","n",NA,NA,NA,NA
+"Physogyra","Scolopsis.monogramma","Lagoon","Bounce back","n + n",NA,NA,NA,NA
+"Physogyra","Scolopsis.monogramma","Sheltered","Weaker","+","Stable","n",FALSE,FALSE
+"Physogyra","Scolopsis.monogramma","Exposed","Stable","n",NA,NA,NA,NA
+"Diploastrea","Acanthochromis.polyacanthus","Lagoon","Stronger","+","Stable","n",FALSE,FALSE
+"Diploastrea","Acanthochromis.polyacanthus","Sheltered","Stronger","+","Weaker","+",FALSE,FALSE
+"Diploastrea","Acanthochromis.polyacanthus","Oblique","Change","- to +","Weaker","-",FALSE,FALSE
+"Diploastrea","Acanthochromis.polyacanthus","Exposed","Change","- to +","Bounce back","n + n",FALSE,FALSE
+"Diploastrea","Acanthurus.blochii","Lagoon","Bounce back","+ - +","Stable","n",FALSE,FALSE
+"Diploastrea","Acanthurus.blochii","Sheltered","Bounce back","+ - +","Weaker","+",FALSE,FALSE
+"Diploastrea","Acanthurus.blochii","Oblique","Change","+ to -","Weaker","-",FALSE,FALSE
+"Diploastrea","Acanthurus.blochii","Exposed","Stable","+","Bounce back","+ n +",FALSE,FALSE
+"Diploastrea","Acanthurus.nigrofuscus","Lagoon","Stable","+","Stronger","-",FALSE,FALSE
+"Diploastrea","Acanthurus.nigrofuscus","Sheltered","Stable","+","Stronger","+",FALSE,FALSE
+"Diploastrea","Acanthurus.nigrofuscus","Oblique","Bounce back","n - n","Stronger","+",FALSE,FALSE
+"Diploastrea","Acanthurus.nigrofuscus","Exposed","Stable","+","Stronger","+",FALSE,FALSE
+"Diploastrea","Amblyglyphidodon.leucogaster","Lagoon","Bounce back","- + -","Stable","n",FALSE,FALSE
+"Diploastrea","Amblyglyphidodon.leucogaster","Sheltered","Bounce back","- + -",NA,NA,NA,NA
+"Diploastrea","Amblyglyphidodon.leucogaster","Exposed","Change","- to +","Change","- to +",TRUE,TRUE
+"Diploastrea","Choerodon.fasciatus","Lagoon","Stable","n","Stable","n",TRUE,TRUE
+"Diploastrea","Choerodon.fasciatus","Sheltered","Stable","n",NA,NA,NA,NA
+"Diploastrea","Choerodon.fasciatus","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Diploastrea","Choerodon.fasciatus","Exposed","Bounce back","n + n","Stable","n",FALSE,FALSE
+"Diploastrea","Epibulus.insidiator","Lagoon","Bounce back","n + n","Stable","n",FALSE,FALSE
+"Diploastrea","Epibulus.insidiator","Sheltered","Bounce back","n + n","Stable","n",FALSE,FALSE
+"Diploastrea","Epibulus.insidiator","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Diploastrea","Epibulus.insidiator","Exposed","Stronger","+","Bounce back","n + n",FALSE,FALSE
+"Diploastrea","Neoglyphidodon.nigroris","Lagoon","Change","+ to -","Stable","n",FALSE,FALSE
+"Diploastrea","Neoglyphidodon.nigroris","Sheltered","Change","+ to -",NA,NA,NA,NA
+"Diploastrea","Neoglyphidodon.nigroris","Oblique","Bounce back","n + n","Bounce back","n - n",TRUE,FALSE
+"Diploastrea","Neoglyphidodon.nigroris","Exposed","Change","+ to -","Bounce back","- + -",FALSE,FALSE
+"Diploastrea","Plectroglyphidodon.lacrymatus","Lagoon","Change","+ to -",NA,NA,NA,NA
+"Diploastrea","Plectroglyphidodon.lacrymatus","Sheltered","Bounce back","- + -",NA,NA,NA,NA
+"Diploastrea","Plectroglyphidodon.lacrymatus","Oblique","Stable","-","Stable","-",TRUE,TRUE
+"Diploastrea","Plectroglyphidodon.lacrymatus","Exposed","Bounce back","- + -","Bounce back","- + -",TRUE,TRUE
+"Diploastrea","Thalassoma.hardwicke","Lagoon","Bounce back","- n -","Stable","n",FALSE,FALSE
+"Diploastrea","Thalassoma.hardwicke","Sheltered","Stable","-",NA,NA,NA,NA
+"Diploastrea","Thalassoma.hardwicke","Oblique","Stronger","-","Stronger","-",TRUE,TRUE
+"Diploastrea","Thalassoma.hardwicke","Exposed","Stable","-","Stable","-",TRUE,TRUE
+"Diploastrea","Zebrasoma.scopas","Lagoon","Stable","+","Stable","n",TRUE,FALSE
+"Diploastrea","Zebrasoma.scopas","Sheltered","Stable","+","Weaker","+",FALSE,FALSE
+"Diploastrea","Zebrasoma.scopas","Oblique","Weaker","+","Weaker","+",TRUE,TRUE
+"Diploastrea","Zebrasoma.scopas","Exposed","Bounce back","+ n +","Bounce back","+ n +",TRUE,TRUE
+"Pocillopora","Dascyllus.reticulatus","Lagoon","Stable","-",NA,NA,NA,NA
+"Pocillopora","Dascyllus.reticulatus","Sheltered","Stable","-","Change","+ to -",FALSE,FALSE
+"Pocillopora","Dascyllus.reticulatus","Oblique","Change","+ to -","Bounce back","- n -",FALSE,FALSE
+"Pocillopora","Dascyllus.reticulatus","Exposed","Bounce back","- n -","Bounce back","- n -",TRUE,TRUE
+"Pocillopora","Pomacentrus.brachialis","Lagoon","Change","+ to -","Change","+ to -",TRUE,TRUE
+"Pocillopora","Pomacentrus.brachialis","Sheltered","Change","+ to -","Change","+ to -",TRUE,TRUE
+"Pocillopora","Pomacentrus.brachialis","Oblique","Bounce back","- n -","Bounce back","- n -",TRUE,TRUE
+"Pocillopora","Pomacentrus.brachialis","Exposed","Change","+ to -","Stronger","+",FALSE,FALSE
+"Pocillopora","Ctenochaetus.striatus","Lagoon","Change","- to +","Stronger","+",FALSE,FALSE
+"Pocillopora","Ctenochaetus.striatus","Sheltered","Change","- to +","Weaker","-",FALSE,FALSE
+"Pocillopora","Ctenochaetus.striatus","Oblique","Stronger","+","Stronger","+",TRUE,TRUE
+"Pocillopora","Ctenochaetus.striatus","Exposed","Change","- to +","Change","- to +",TRUE,TRUE
+"Pocillopora","Chaetodon.lunulatus","Lagoon","Bounce back","n + n","Stable","n",FALSE,FALSE
+"Pocillopora","Chaetodon.lunulatus","Sheltered","Bounce back","n + n","Stable","n",FALSE,FALSE
+"Pocillopora","Chaetodon.lunulatus","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Pocillopora","Chaetodon.lunulatus","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Pocillopora","Chrysiptera.talboti","Lagoon","Weaker","+",NA,NA,NA,NA
+"Pocillopora","Chrysiptera.talboti","Sheltered","Bounce back","+ - +","Stable","n",FALSE,FALSE
+"Pocillopora","Chrysiptera.talboti","Oblique","Weaker","-","Stable","n",FALSE,FALSE
+"Pocillopora","Chrysiptera.talboti","Exposed","Weaker","+","Weaker","+",TRUE,TRUE
+"Pocillopora","Hemigymnus.fasciatus","Lagoon","Weaker","+",NA,NA,NA,NA
+"Pocillopora","Hemigymnus.fasciatus","Sheltered","Weaker","+",NA,NA,NA,NA
+"Pocillopora","Hemigymnus.fasciatus","Exposed","Weaker","+","Stable","n",FALSE,FALSE
+"Pocillopora","Naso.annulatus","Sheltered","Stable","n",NA,NA,NA,NA
+"Pocillopora","Naso.annulatus","Oblique","Stronger","+","Stable","n",FALSE,FALSE
+"Pocillopora","Naso.annulatus","Exposed","Stable","n",NA,NA,NA,NA
+"Acropora","Chlorurus.spilurus","Lagoon","Weaker","-","Weaker","-",TRUE,TRUE
+"Acropora","Chlorurus.spilurus","Sheltered","Weaker","-","Stronger","+",FALSE,FALSE
+"Acropora","Chlorurus.spilurus","Oblique","Weaker","-","Weaker","-",TRUE,TRUE
+"Acropora","Chlorurus.spilurus","Exposed","Stable","n","Stable","-",TRUE,FALSE
+"Acropora","Scarus.niger","Lagoon","Weaker","+","Bounce back","n + n",FALSE,FALSE
+"Acropora","Scarus.niger","Sheltered","Weaker","+","Weaker","+",TRUE,TRUE
+"Acropora","Scarus.niger","Oblique","Weaker","+","Weaker","+",TRUE,TRUE
+"Acropora","Scarus.niger","Exposed","Bounce back","+ - +","Bounce back","+ n +",TRUE,FALSE
+"Acropora","Siganus.doliatus","Lagoon","Weaker","+","Stable","n",FALSE,FALSE
+"Acropora","Siganus.doliatus","Sheltered","Weaker","+","Stable","n",FALSE,FALSE
+"Acropora","Siganus.doliatus","Oblique","Bounce back","+ n +","Bounce back","+ n +",TRUE,TRUE
+"Acropora","Siganus.doliatus","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Acropora","Centropyge.bicolor","Lagoon","Bounce back","n - n","Stable","n",FALSE,FALSE
+"Acropora","Centropyge.bicolor","Sheltered","Bounce back","n - n","Stronger","-",FALSE,FALSE
+"Acropora","Centropyge.bicolor","Oblique","Stronger","-","Stronger","-",TRUE,TRUE
+"Acropora","Centropyge.bicolor","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Acropora","Chaetodon.vagabundus","Lagoon","Change","+ to -","Stable","n",FALSE,FALSE
+"Acropora","Chaetodon.vagabundus","Sheltered","Bounce back","n - n","Stable","n",FALSE,FALSE
+"Acropora","Chaetodon.vagabundus","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Acropora","Chaetodon.vagabundus","Exposed","Stable","n","Weaker","-",FALSE,FALSE
+"Acropora","Coris.batuensis","Lagoon","Stronger","-","Stable","n",FALSE,FALSE
+"Acropora","Coris.batuensis","Oblique","Stable","n","Stable","n",TRUE,TRUE
+"Acropora","Coris.batuensis","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Acropora","Labroides.dimidiatus","Lagoon","Change","- to +","Stronger","+",FALSE,FALSE
+"Acropora","Labroides.dimidiatus","Sheltered","Weaker","-","Bounce back","n + n",FALSE,FALSE
+"Acropora","Labroides.dimidiatus","Oblique","Change","- to +","Weaker","-",FALSE,FALSE
+"Acropora","Parupeneus.barberinus","Lagoon","Weaker","+","Stable","n",FALSE,FALSE
+"Acropora","Parupeneus.barberinus","Sheltered","Weaker","+","Weaker","+",TRUE,TRUE
+"Acropora","Parupeneus.barberinus","Oblique","Weaker","+","Weaker","+",TRUE,TRUE
+"Acropora","Parupeneus.barberinus","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Acropora","Dascyllus.reticulatus","Lagoon","Stable","n",NA,NA,NA,NA
+"Acropora","Dascyllus.reticulatus","Oblique","Weaker","+","Stronger","-",FALSE,FALSE
+"Fire.coral","Abudefduf.whitleyi","Exposed","Bounce back","- n -","Bounce back","- n -",TRUE,TRUE
+"Fire.coral","Bodianus.mesothorax","Lagoon","Weaker","+",NA,NA,NA,NA
+"Fire.coral","Bodianus.mesothorax","Oblique","Stable","n",NA,NA,NA,NA
+"Fire.coral","Bodianus.mesothorax","Exposed","Weaker","+","Weaker","+",TRUE,TRUE
+"Fire.coral","Pomacentrus.coelestis","Lagoon","Stable","+",NA,NA,NA,NA
+"Fire.coral","Pomacentrus.coelestis","Oblique","Stable","n","Stronger","+",FALSE,FALSE
+"Dipsastraea","Acanthurus.lineatus","Lagoon","Bounce back","n + n",NA,NA,NA,NA
+"Dipsastraea","Acanthurus.lineatus","Sheltered","Bounce back","n + n",NA,NA,NA,NA
+"Dipsastraea","Acanthurus.lineatus","Oblique","Change","+ to -","Stronger","-",FALSE,FALSE
+"Dipsastraea","Acanthurus.lineatus","Exposed","Stronger","+",NA,NA,NA,NA
+"Dipsastraea","Chaetodon.citrinellus","Lagoon","Stable","n",NA,NA,NA,NA
+"Dipsastraea","Chaetodon.citrinellus","Sheltered","Stable","n","Bounce back","n + n",FALSE,FALSE
+"Dipsastraea","Chaetodon.citrinellus","Oblique","Weaker","+","Stable","n",FALSE,FALSE
+"Dipsastraea","Chaetodon.citrinellus","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Acanthastrea","Amphiprion.clarkii","Lagoon","Bounce back","n + n",NA,NA,NA,NA
+"Acanthastrea","Amphiprion.clarkii","Exposed","Stable","n",NA,NA,NA,NA
+"Acanthastrea","Scarus.rivulatus","Lagoon","Stable","+",NA,NA,NA,NA
+"Acanthastrea","Scarus.rivulatus","Sheltered","Stable","+","Stable","+",TRUE,TRUE
+"Acanthastrea","Scarus.rivulatus","Oblique","Weaker","+",NA,NA,NA,NA
+"Acanthastrea","Scarus.rivulatus","Exposed","Stable","n",NA,NA,NA,NA
+"Isopora","Chaetodon.baronessa","Oblique","Stable","n",NA,NA,NA,NA
+"Isopora","Chaetodon.baronessa","Exposed","Weaker","+",NA,NA,NA,NA
+"Goniopora","Parupeneus.cyclostomus","Lagoon","Weaker","+",NA,NA,NA,NA
+"Goniopora","Parupeneus.cyclostomus","Sheltered","Weaker","+","Stable","n",FALSE,FALSE
+"Goniopora","Parupeneus.cyclostomus","Oblique","Stable","n","Weaker","+",FALSE,FALSE
+"Goniopora","Parupeneus.cyclostomus","Exposed","Stable","n","Stable","n",TRUE,TRUE
+"Pavona","Lutjanus.fulviflamma","Sheltered","Change","- to +","Stable","n",FALSE,FALSE
+"Pavona","Lutjanus.fulviflamma","Exposed","Stronger","+","Stronger","+",TRUE,TRUE
+"Porites","Amblyglyphidodon.leucogaster","Oblique",NA,NA,"Bounce back","n + n",NA,NA
+"Porites","Chromis.viridis","Sheltered",NA,NA,"Stable","n",NA,NA
+"Porites","Pomacentrus.lepidogenys","Lagoon",NA,NA,"Stable","n",NA,NA
+"Porites","Pomacentrus.lepidogenys","Sheltered",NA,NA,"Change","+ to -",NA,NA
+"Porites","Scarus.altipinnis","Oblique",NA,NA,"Stronger","-",NA,NA
+"Porites","Plectorhinchus.chrysotaenia","Oblique",NA,NA,"Stable","n",NA,NA
+"Porites","Plectorhinchus.chrysotaenia","Exposed",NA,NA,"Stable","n",NA,NA
+"Porites","Chaetodon.kleinii","Exposed",NA,NA,"Stable","n",NA,NA
+"Porites","Hemigymnus.melapterus","Exposed",NA,NA,"Stable","n",NA,NA
+"Porites","Labroides.dimidiatus","Lagoon",NA,NA,"Weaker","-",NA,NA
+"Porites","Neoglyphidodon.nigroris","Oblique",NA,NA,"Stronger","-",NA,NA
+"Porites","Dischistodus.perspicillatus","Oblique",NA,NA,"Stronger","-",NA,NA
+"Porites","Hemiglyphidodon.plagiometopon","Lagoon",NA,NA,"Weaker","+",NA,NA
+"Porites","Parupeneus.crassilabris","Oblique",NA,NA,"Stable","n",NA,NA
+"Physogyra","Chrysiptera.flavipinnis","Sheltered",NA,NA,"Stronger","+",NA,NA
+"Diploastrea","Amblyglyphidodon.leucogaster","Oblique",NA,NA,"Stable","n",NA,NA
+"Pocillopora","Hemigymnus.fasciatus","Oblique",NA,NA,"Stable","n",NA,NA
+"Acropora","Coris.batuensis","Sheltered",NA,NA,"Stronger","-",NA,NA
+"Acropora","Labroides.dimidiatus","Exposed",NA,NA,"Weaker","-",NA,NA
+"Acropora","Dascyllus.reticulatus","Sheltered",NA,NA,"Stronger","-",NA,NA
+"Acropora","Dascyllus.reticulatus","Exposed",NA,NA,"Stronger","-",NA,NA
+"Fire.coral","Pomacentrus.coelestis","Exposed",NA,NA,"Weaker","+",NA,NA
+"Isopora","Chaetodon.baronessa","Sheltered",NA,NA,"Weaker","+",NA,NA
+"Pavona","Lutjanus.fulviflamma","Oblique",NA,NA,"Bounce back","n + n",NA,NA

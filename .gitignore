@@ -1,6 +1,6 @@
-outputs/
-*.rds
+# Large fitted-model caches (recreated by the scripts)
+outputs/brms_*/
+outputs/**/*.rds
+.Rproj.user/
 .Rhistory
 .RData
-.Rproj.user/
-.DS_Store
