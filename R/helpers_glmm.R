@@ -1,7 +1,9 @@
 # =============================================================================
 # helpers_glmm.R
 # Functions shared by 01_fish_summary_glmms.R and 02_trophic_glmms.R.
-# Model, one per response column:   Response ~ Year * Exposure + (1 | SiteDepthTransect)
+# Model, one per response column:   Response ~ Year * Exposure + (1 | Site) + (1 | SiteDepthTransect)
+#   Site = the 14 sites (transects at the same site share a site effect); SiteDepthTransect = one ID per transect position
+#   (site, depth stratum and transect number), so repeated surveys of the same transect share a transect effect.
 # Family chosen automatically:  all values > 0 -> Gamma(log);  any zeros -> hurdle_lognormal()
 # =============================================================================
 
@@ -26,21 +28,21 @@ prep_glmm_data <- function(dat) {
 fit_one_glmm <- function(resp_col, data, seed = SEED_MASTER) {
   message("Fitting: ", resp_col)
   df <- data |>
-    transmute(Year, Exposure, SiteDepthTransect, Response = as.numeric(.data[[resp_col]])) |>
-    filter(!is.na(Response), !is.na(Year), !is.na(Exposure), !is.na(SiteDepthTransect))
+    transmute(Year, Exposure, Site = factor(Site), SiteDepthTransect, Response = as.numeric(.data[[resp_col]])) |>
+    filter(!is.na(Response), !is.na(Year), !is.na(Exposure), !is.na(Site), !is.na(SiteDepthTransect))
   if (nrow(df) == 0)         { warning("Skipping ", resp_col, ": no complete rows."); return(NULL) }
   if (all(df$Response == 0)) { warning("Skipping ", resp_col, ": all values are zero."); return(NULL) }
   n_zero <- sum(df$Response == 0); prop_zero <- mean(df$Response == 0)
   message("  zeros = ", n_zero, " (", round(100 * prop_zero, 1), "%)")
 
   if (n_zero == 0) {
-    fit <- brm(Response ~ Year * Exposure + (1 | SiteDepthTransect), data = df,
+    fit <- brm(Response ~ Year * Exposure + (1 | Site) + (1 | SiteDepthTransect), data = df,
                family = Gamma(link = "log"), prior = priors_gamma,
                chains = 4, iter = 3000, warmup = 1000, cores = min(4, parallel::detectCores()),
                control = ctrl, seed = seed)
     fam <- "Gamma(log)"
   } else {
-    fit <- brm(bf(Response ~ Year * Exposure + (1 | SiteDepthTransect), hu ~ 1), data = df,
+    fit <- brm(bf(Response ~ Year * Exposure + (1 | Site) + (1 | SiteDepthTransect), hu ~ 1), data = df,
                family = hurdle_lognormal(), prior = priors_hurdle_logn,
                chains = 4, iter = 3000, warmup = 1000, cores = min(4, parallel::detectCores()),
                control = ctrl, seed = seed)

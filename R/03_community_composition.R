@@ -65,7 +65,8 @@ nmds_analysis <- function(a, p, label, italic_labels = FALSE) {
   
   mds_plot <- ggplot(nmds_data, aes(MDS1, MDS2)) +
     geom_point(aes(colour = Exposure, shape = Exposure, alpha = Year), size = 3) +
-    stat_ellipse(aes(group = Exposure, linetype = Exposure), colour = "black", linewidth = 0.8) +
+    stat_ellipse(aes(group = Exposure, colour = Exposure, linetype = Exposure),
+                 type = "norm", level = 0.68, linewidth = 0.8) +
     scale_colour_manual(values = exposure_cols, drop = FALSE, name = "Exposure") +
     scale_alpha_manual(name = "Year", values = year_alpha) +
     labs(title = a$titles[1], x = "NMDS Dimension 1", y = "NMDS Dimension 2") + theme_classic()

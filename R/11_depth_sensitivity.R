@@ -3,8 +3,8 @@
 # Does pooling the shallow (3-5 m) and deep (8-10 m) transects matter?
 # Refits the total-density, richness and biomass models with Depth and Depth x Exposure added,
 # and compares them with the pooled models from script 01:
-#   pooled model:  Response ~ Year * Exposure + (1 | SiteDepthTransect)
-#   depth model:   Response ~ Year * Exposure + Depth * Exposure + (1 | SiteDepthTransect)
+#   pooled model:  Response ~ Year * Exposure + (1 | Site) + (1 | SiteDepthTransect)
+#   depth model:   Response ~ Year * Exposure + Depth * Exposure + (1 | Site) + (1 | SiteDepthTransect)
 #
 # Produces (outputs/depth_sensitivity/):
 #   Depth_model_comparison      LOO comparison (elpd_diff of the depth model minus the pooled model)
@@ -28,17 +28,17 @@ df_base     <- prep_glmm_data(dat)
 metric_cols <- col_range(dat, METRIC_FIRST, METRIC_LAST)
 df_base$Depth <- factor(df_base$Depth)
 
-pooled_dir <- file.path(OUT_DIR, "glmm_fish_metrics", "brms_fish_models")
-depth_dir  <- dirname(out_path(res_dir, "brms_depth_models", ".keep"))
+pooled_dir <- file.path(OUT_DIR, "glmm_fish_metrics", "brms_fish_models_site")
+depth_dir  <- dirname(out_path(res_dir, "brms_depth_models_site", ".keep"))
 
 # ---- 1. Fit (or load) the depth models, using the same family as the pooled model ----
 fit_depth_model <- function(resp_col) {
   file <- file.path(depth_dir, paste0(safe_file(resp_col), ".rds"))
   if (file.exists(file)) return(readRDS(file))
   df <- df_base |>
-    transmute(Year, Exposure, Depth, SiteDepthTransect, Response = as.numeric(.data[[resp_col]])) |>
+    transmute(Year, Exposure, Depth, Site = factor(Site), SiteDepthTransect, Response = as.numeric(.data[[resp_col]])) |>
     filter(!is.na(Response))
-  f <- Response ~ Year * Exposure + Depth * Exposure + (1 | SiteDepthTransect)
+  f <- Response ~ Year * Exposure + Depth * Exposure + (1 | Site) + (1 | SiteDepthTransect)
   if (all(df$Response > 0)) {
     fit <- brm(f, data = df, family = Gamma(link = "log"), prior = priors_gamma,
                chains = 4, iter = 3000, warmup = 1000, control = ctrl, seed = SEED_MASTER)

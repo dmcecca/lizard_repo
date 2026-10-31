@@ -9,7 +9,7 @@
 #   Fish_GLMM_results_with_EP             population-level effects (.csv and .docx)
 #   Fish_model_info.csv                   family used for each response
 #
-# Model:    Response ~ Year * Exposure + (1 | SiteDepthTransect)
+# Model:    Response ~ Year * Exposure + (1 | Site) + (1 | SiteDepthTransect)
 #           Gamma (log link) if all values are > 0, otherwise hurdle-lognormal.
 #           4 chains x 3000 iterations (1000 warm-up).
 # Run time: hours. Fitted models are saved and re-used on later runs.
@@ -31,7 +31,7 @@ df_base     <- prep_glmm_data(dat)
 metric_cols <- col_range(dat, METRIC_FIRST, METRIC_LAST)   # Total.density, Species.richness, Total.biomass
 
 # ---- 2. Fit (or load cached) models ------------------------------------------
-model_dir <- dirname(out_path(res_dir, "brms_fish_models", ".keep"))
+model_dir <- dirname(out_path(res_dir, "brms_fish_models_site", ".keep"))
 cached    <- file.path(model_dir, paste0(safe_file(metric_cols), ".rds"))
 if (all(file.exists(cached))) {
   message("Loading cached models from ", model_dir)

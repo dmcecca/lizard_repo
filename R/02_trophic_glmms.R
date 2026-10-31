@@ -3,7 +3,7 @@
 # Temporal trends in the biomass of each trophic group in each exposure zone (same GLMM as script 01).
 #
 # Outputs (outputs/glmm_trophic/):
-#   EMM_trophic_groups_ALL_3col.pdf       Figure S2
+#   EMM_trophic_groups_ALL_3col.pdf       Figure S1
 #   Trophic_GLMM_contrasts_with_EP        Table S2 (pairwise contrasts; .csv and .docx)
 #   Trophic_GLMM_results_with_EP          population-level effects (.csv and .docx)
 #   Trophic_model_info.csv                family used for each group
@@ -28,7 +28,7 @@ trophic_cols <- col_range(dat, TROPHIC_FIRST, TROPHIC_LAST)   # 18 columns, B_Be
 message(length(trophic_cols), " trophic-group columns: ", paste(trophic_cols, collapse = ", "))
 
 # ---- 2. Fit (or load cached) models ------------------------------------------
-model_dir <- dirname(out_path(res_dir, "brms_trophic_models", ".keep"))
+model_dir <- dirname(out_path(res_dir, "brms_trophic_models_site", ".keep"))
 cached    <- file.path(model_dir, paste0(safe_file(trophic_cols), ".rds"))
 if (all(file.exists(cached))) {
   message("Loading cached models from ", model_dir)

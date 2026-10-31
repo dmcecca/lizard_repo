@@ -16,8 +16,8 @@ if (!file.exists("R/00_setup.R")) setwd(dirname(dirname(rstudioapi::getSourceEdi
 source("R/00_setup.R")
 require_pkgs(c("brms", "emmeans", "coda", "broom", "flextable"))
 
-FISH_MODEL_FOLDER    <- file.path(OUT_DIR, "glmm_fish_metrics", "brms_fish_models")
-TROPHIC_MODEL_FOLDER <- file.path(OUT_DIR, "glmm_trophic", "brms_trophic_models")
+FISH_MODEL_FOLDER    <- file.path(OUT_DIR, "glmm_fish_metrics", "brms_fish_models_site")
+TROPHIC_MODEL_FOLDER <- file.path(OUT_DIR, "glmm_trophic", "brms_trophic_models_site")
 OUT_FOLDER           <- file.path(OUT_DIR, "condensed_tables")
 
 library(brms); library(emmeans); library(coda); library(broom)
